@@ -1,7 +1,8 @@
 // App.tsx — rutas principales.
 // FR-018: ErrorBoundary global.
-// Fase 1.5: ruta /demo accesible en producción.
+// Fase 1.5: ruta /demo accesible en producción + auth guard en rutas protegidas.
 
+import { type ReactNode } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ErrorBoundary } from "./components/feedback/ErrorBoundary";
 import { AppShell } from "./components/layout/AppShell";
@@ -10,6 +11,14 @@ import { ScannerScreen } from "./features/scanner/ScannerScreen";
 import { DeliveryResultScreen } from "./features/delivery/DeliveryResultScreen";
 import { MyRouteScreen } from "./features/route/MyRouteScreen";
 import { DemoScreen } from "./features/demo/DemoScreen";
+import { useSessionStore } from "./store/session";
+
+/** Auth guard — redirige a login si no hay sesión activa */
+function Protected({ children }: { children: ReactNode }) {
+  const session = useSessionStore((s) => s.session);
+  if (!session) return <Navigate to="/login" replace />;
+  return <>{children}</>;
+}
 
 export default function App() {
   return (
@@ -20,33 +29,41 @@ export default function App() {
           <Route
             path="/escanear"
             element={
-              <AppShell>
-                <ScannerScreen />
-              </AppShell>
+              <Protected>
+                <AppShell>
+                  <ScannerScreen />
+                </AppShell>
+              </Protected>
             }
           />
           <Route
             path="/resultado/:orderToken"
             element={
-              <AppShell>
-                <DeliveryResultScreen />
-              </AppShell>
+              <Protected>
+                <AppShell>
+                  <DeliveryResultScreen />
+                </AppShell>
+              </Protected>
             }
           />
           <Route
             path="/mi-ruta"
             element={
-              <AppShell>
-                <MyRouteScreen />
-              </AppShell>
+              <Protected>
+                <AppShell>
+                  <MyRouteScreen />
+                </AppShell>
+              </Protected>
             }
           />
           <Route
             path="/demo"
             element={
-              <AppShell>
-                <DemoScreen />
-              </AppShell>
+              <Protected>
+                <AppShell>
+                  <DemoScreen />
+                </AppShell>
+              </Protected>
             }
           />
           <Route path="*" element={<Navigate to="/login" replace />} />
