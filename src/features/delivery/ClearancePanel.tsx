@@ -6,7 +6,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
-import { Spinner } from "../../components/ui/Spinner";
+
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { gateway } from "../../data/mocks/mockGateway";
 import type { ScannedOrderDTO, ConfirmDeliveryResult } from "../../data/contracts";
@@ -106,13 +106,7 @@ export function ClearancePanel({ order }: ClearancePanelProps) {
         onClick={handleConfirm}
         data-testid="delivery-confirm"
       >
-        {state === "loading" ? (
-          <>
-            <Spinner size="sm" /> Confirmando entrega…
-          </>
-        ) : (
-          "Confirmar entrega física"
-        )}
+        {state === "loading" ? "Confirmando entrega…" : "Confirmar entrega física"}
       </Button>
     </div>
   );

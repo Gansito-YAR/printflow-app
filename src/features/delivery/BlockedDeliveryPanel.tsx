@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
-import { Spinner } from "../../components/ui/Spinner";
+
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { gateway } from "../../data/mocks/mockGateway";
 import { useSessionStore } from "../../store/session";
@@ -74,13 +74,7 @@ export function BlockedDeliveryPanel({ order, onRevalidate }: BlockedDeliveryPan
             onClick={handleRevalidate}
             data-testid="button-revalidate"
           >
-            {revalidating ? (
-              <>
-                <Spinner size="sm" /> Revalidando…
-              </>
-            ) : (
-              "Revalidar saldo"
-            )}
+            {revalidating ? "Revalidando…" : "Revalidar saldo"}
           </Button>
         )}
       </div>

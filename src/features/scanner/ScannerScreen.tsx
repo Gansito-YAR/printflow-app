@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { PlaceholderBox } from "../../components/ui/PlaceholderBox";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
-import { Spinner } from "../../components/ui/Spinner";
+
 import { gateway } from "../../data/mocks/mockGateway";
 import { useSessionStore } from "../../store/session";
 import { useDemoStore } from "../../store/demo";
@@ -214,13 +214,7 @@ export function ScannerScreen() {
           onClick={handleManualScan}
           data-testid="button-manual-scan"
         >
-          {validating ? (
-            <>
-              <Spinner size="sm" /> Validando código…
-            </>
-          ) : (
-            "Validar código"
-          )}
+          {validating ? "Validando código…" : "Validar código"}
         </Button>
       </div>
 
