@@ -164,9 +164,9 @@ export function MyRouteScreen() {
         </div>
       )}
       {state === "error" && (
-        <div data-testid="route-error" style={{ padding: "32px 16px", textAlign: "center" }}>
+        <div data-testid="route-error" style={{ padding: "32px 16px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
           <p style={{ marginBottom: "16px" }}>[!] No pudimos cargar Mi Ruta</p>
-          <Button variant="secondary" onClick={() => loadRoute()} data-testid="button-retry">
+          <Button variant="secondary" fullWidth onClick={() => loadRoute()} data-testid="button-retry">
             Reintentar
           </Button>
         </div>
