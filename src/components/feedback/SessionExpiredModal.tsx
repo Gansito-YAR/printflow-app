@@ -33,22 +33,35 @@ export function SessionExpiredModal() {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: "var(--overlay-backdrop)",
-        opacity: 0.5,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         zIndex: 1000,
       }}
     >
+      {/* Backdrop semitransparente — separado del modal para no afectarlo */}
       <div
         style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "var(--overlay-backdrop)",
+          opacity: 0.5,
+        }}
+      />
+      {/* Modal content — opaco, encima del backdrop */}
+      <div
+        style={{
+          position: "relative",
           backgroundColor: "var(--surface-0)",
           border: "2px solid var(--border-strong)",
           padding: "32px 24px",
           maxWidth: "320px",
           width: "90%",
           textAlign: "center",
+          zIndex: 1,
         }}
       >
         <p style={{ fontSize: "18px", fontWeight: 700, marginBottom: "24px" }}>
