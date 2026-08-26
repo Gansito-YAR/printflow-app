@@ -94,6 +94,15 @@ export function DemoScreen() {
   const handleToggleSessionExpired = (v: boolean) => {
     demo.setSessionExpired(v);
     gateway.setSessionExpired(v);
+    // Si se activa y hay sesión activa, poner el deadline en el pasado
+    // para que el SessionExpiredModal se dispare inmediatamente
+    if (v && session) {
+      const expiredSession = {
+        ...session,
+        absoluteDeadline: new Date(Date.now() - 1000).toISOString(),
+      };
+      useSessionStore.getState().login(expiredSession);
+    }
   };
 
   const handleToggleConfirmError = (v: boolean) => {
