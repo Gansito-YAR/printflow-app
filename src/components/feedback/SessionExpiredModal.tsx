@@ -3,6 +3,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { useSessionStore } from "../../store/session";
+import { useDemoStore } from "../../store/demo";
 
 export function SessionExpiredModal() {
   const navigate = useNavigate();
@@ -18,6 +19,9 @@ export function SessionExpiredModal() {
   if (!isExpired) return null;
 
   const handleGoToLogin = () => {
+    // Desactivar el interruptor de sesión vencida del demo
+    // para que el próximo login no dispare el modal de nuevo
+    useDemoStore.getState().setSessionExpired(false);
     logout();
     navigate("/login");
   };
