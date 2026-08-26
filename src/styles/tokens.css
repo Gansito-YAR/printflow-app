@@ -1,0 +1,42 @@
+/* PrintFlow AI — tokens.css
+ * Escala de grises. Cero color de marca.
+ * Constitution Principle IV: Visual Sin Color.
+ * Cuando llegue la identidad visual (Fase 2), solo se cambian estas variables.
+ */
+
+:root {
+  /* Surfaces (fondos) */
+  --surface-0: #ffffff; /* fondo base */
+  --surface-1: #f5f5f5; /* fondo alterno */
+  --surface-2: #e0e0e0; /* fondo de cards */
+  --surface-3: #bdbdbd; /* fondo de overlays */
+
+  /* Ink (texto) */
+  --ink-strong: #111111; /* texto primario */
+  --ink-base: #333333; /* texto secundario */
+  --ink-muted: #757575; /* texto terciario/labels */
+
+  /* Borders */
+  --border-hairline: #d4d4d4; /* borde fino 1px */
+  --border-strong: #111111; /* borde critico 2/4px */
+
+  /* Overlay (modal backdrop) */
+  --overlay-backdrop: #111111; /* overlay semitransparente via opacity */
+
+  /* Spacing base (múltiplos de 8) */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --space-8: 64px;
+
+  /* Layout */
+  --header-height: 56px;
+  --bottom-nav-height: 64px;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Hitbox mínimo */
+  --hitbox-min: 60px;
+  --button-height: 64px;
+}

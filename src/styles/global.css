@@ -1,0 +1,60 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+/* Map Tailwind theme colors to CSS variables (Constitution Principle IV) */
+@theme {
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-ink-strong: var(--ink-strong);
+  --color-ink-base: var(--ink-base);
+  --color-ink-muted: var(--ink-muted);
+  --color-border-hairline: var(--border-hairline);
+  --color-border-strong: var(--border-strong);
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: var(--surface-0);
+  color: var(--ink-strong);
+  margin: 0;
+  padding: 0;
+}
+
+/* Trama diagonal para criticidad (sin color) */
+.trama-diagonal {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 4px,
+    var(--surface-3) 4px,
+    var(--surface-3) 8px
+  );
+}
+
+/* Skeleton pulse para loading */
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.skeleton-pulse {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* Spinner monocromático */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner-ring {
+  animation: spin 0.8s linear infinite;
+}
