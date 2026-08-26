@@ -7,6 +7,7 @@ import { useDemoStore } from "../../store/demo";
 import { useSessionStore } from "../../store/session";
 import { gateway } from "../../data/mocks/mockGateway";
 import { FIXTURE_LIST } from "../../data/mocks/fixtures";
+import { CrashTrigger } from "./CrashTrigger";
 
 interface ToggleProps {
   label: string;
@@ -121,8 +122,7 @@ export function DemoScreen() {
 
   const handleCrash = () => {
     demo.setCrash(true);
-    // Forzar error en el próximo render
-    throw new Error("[DEMO] Error forzado por interruptor de demo");
+    // El error se lanza en el render via CrashTrigger, no aquí
   };
 
   const handleLogout = () => {
@@ -134,6 +134,12 @@ export function DemoScreen() {
   const minutesLeft = session
     ? Math.max(0, Math.round((new Date(session.absoluteDeadline).getTime() - Date.now()) / 60000))
     : 0;
+
+  // CrashTrigger: lanza error durante el render si el interruptor está activo
+  // ErrorBoundary solo atrapa errores de render, no de event handlers
+  if (demo.crash) {
+    return <CrashTrigger shouldCrash={true} />;
+  }
 
   return (
     <div data-testid="demo-screen" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>

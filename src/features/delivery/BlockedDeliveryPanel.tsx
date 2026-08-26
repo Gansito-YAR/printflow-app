@@ -18,7 +18,7 @@ interface BlockedDeliveryPanelProps {
 
 export function BlockedDeliveryPanel({ order, onRevalidate }: BlockedDeliveryPanelProps) {
   const navigate = useNavigate();
-  const isOnline = useSessionStore((s) => s.isOnline);
+  const isOnline = useSessionStore((s) => s.getEffectiveOnline());
   const [revalidating, setRevalidating] = useState(false);
 
   const handleRevalidate = async () => {

@@ -16,7 +16,7 @@ import type { ScannedOrderDTO, GuardDecision } from "../../data/contracts";
 export function DeliveryResultScreen() {
   const { orderToken = "" } = useParams();
   const session = useSessionStore((s) => s.session);
-  const isOnline = useSessionStore((s) => s.isOnline);
+  const isOnline = useSessionStore((s) => s.getEffectiveOnline());
 
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<ScannedOrderDTO | null>(null);
@@ -56,7 +56,7 @@ export function DeliveryResultScreen() {
 
   if (notFound || !order) {
     return (
-      <div data-testid="delivery-not-found" style={{ padding: "24px 16px", textAlign: "center" }}>
+      <div data-testid="qr-not-recognized" style={{ padding: "24px 16px", textAlign: "center" }}>
         <p style={{ fontWeight: 600, marginBottom: "16px" }}>Código QR no reconocido</p>
       </div>
     );
