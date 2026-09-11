@@ -280,8 +280,8 @@ export function DemoScreen() {
         </div>
       </section>
 
-      {/* Cerrar sesión */}
-      {session && (
+      {/* Cerrar sesión / Ir a login */}
+      {session ? (
         <button
           data-testid="demo-logout"
           onClick={handleLogout}
@@ -297,6 +297,24 @@ export function DemoScreen() {
           }}
         >
           Cerrar sesión
+        </button>
+      ) : (
+        <button
+          data-testid="demo-login"
+          onClick={() => navigate("/login")}
+          style={{
+            height: "48px",
+            minHeight: "var(--hitbox-min)",
+            padding: "0 16px",
+            backgroundColor: "var(--ink-strong)",
+            color: "var(--surface-0)",
+            border: "2px solid var(--ink-strong)",
+            fontSize: "14px",
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
+          Ir a login
         </button>
       )}
     </div>
