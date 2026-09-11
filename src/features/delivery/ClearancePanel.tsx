@@ -28,7 +28,7 @@ export function ClearancePanel({ order }: ClearancePanelProps) {
       setResult(res);
       if (res.ok) {
         setState("success");
-      } else if (res.reason.includes("ya había sido registrada")) {
+      } else if (res.code === "ALREADY_DELIVERED") {
         setState("already-registered");
       } else {
         setState("error");

@@ -13,10 +13,11 @@ import type { ScannedOrderDTO } from "../../data/contracts";
 
 interface BlockedDeliveryPanelProps {
   order: ScannedOrderDTO;
+  orderToken: string;
   onRevalidate: (order: ScannedOrderDTO) => void;
 }
 
-export function BlockedDeliveryPanel({ order, onRevalidate }: BlockedDeliveryPanelProps) {
+export function BlockedDeliveryPanel({ order, orderToken, onRevalidate }: BlockedDeliveryPanelProps) {
   const navigate = useNavigate();
   const isOnline = useSessionStore((s) => s.getEffectiveOnline());
   const [revalidating, setRevalidating] = useState(false);
@@ -24,7 +25,8 @@ export function BlockedDeliveryPanel({ order, onRevalidate }: BlockedDeliveryPan
   const handleRevalidate = async () => {
     setRevalidating(true);
     try {
-      const outcome = await gateway.scanOrder(order.orderToken);
+      // M-01: revalidar con el token de la URL, no con order.orderToken (payload opaco).
+      const outcome = await gateway.scanOrder(orderToken);
       if (outcome.kind === "FOUND") {
         onRevalidate(outcome.order);
       }
@@ -47,16 +49,16 @@ export function BlockedDeliveryPanel({ order, onRevalidate }: BlockedDeliveryPan
     >
       <StatusBadge variant="blocked" label="ENTREGA BLOQUEADA" />
       <div>
-        <p style={{ fontSize: "14px", color: "var(--ink-muted)" }}>Cliente</p>
+        <p style={{ fontSize: "14px", color: "var(--ink-base)" }}>Cliente</p>
         <p style={{ fontSize: "16px", fontWeight: 600 }}>{order.customerLabel}</p>
       </div>
       <div>
-        <p style={{ fontSize: "14px", color: "var(--ink-muted)" }}>Producto</p>
+        <p style={{ fontSize: "14px", color: "var(--ink-base)" }}>Producto</p>
         <p style={{ fontSize: "16px", fontWeight: 600 }}>{order.productLabel}</p>
       </div>
       {order.balanceDue && (
         <div>
-          <p style={{ fontSize: "14px", color: "var(--ink-muted)" }}>Saldo pendiente</p>
+          <p style={{ fontSize: "14px", color: "var(--ink-base)" }}>Saldo pendiente</p>
           <p style={{ fontSize: "18px", fontWeight: 700 }}>${order.balanceDue}</p>
         </div>
       )}

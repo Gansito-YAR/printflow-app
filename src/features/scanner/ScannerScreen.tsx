@@ -10,14 +10,15 @@ import { Input } from "../../components/ui/Input";
 
 import { gateway } from "../../data/mocks/mockGateway";
 import { useSessionStore } from "../../store/session";
-import { useDemoStore } from "../../store/demo";
+import { useScannerStore } from "../../store/scanner";
 
 export function ScannerScreen() {
   const navigate = useNavigate();
   const isOnline = useSessionStore((s) => s.getEffectiveOnline());
-  const supportsTorch = useDemoStore((s) => s.supportsTorch);
-  const cameraDenied = useDemoStore((s) => s.cameraPermissionDenied);
+  const supportsTorch = useScannerStore((s) => s.supportsTorch);
+  const cameraDenied = useScannerStore((s) => s.cameraPermissionDenied);
   const [error, setError] = useState(false);
+  const [networkError, setNetworkError] = useState(false);
   const [manualToken, setManualToken] = useState("");
   const [validating, setValidating] = useState(false);
   const [torchOn, setTorchOn] = useState(false);
@@ -26,15 +27,18 @@ export function ScannerScreen() {
     if (!manualToken.trim() || !isOnline || validating) return;
     setValidating(true);
     setError(false);
+    setNetworkError(false);
     try {
       const outcome = await gateway.scanOrder(manualToken.trim());
       if (outcome.kind === "FOUND") {
         navigate(`/resultado/${manualToken.trim()}`);
+      } else if (outcome.kind === "NETWORK_ERROR") {
+        setNetworkError(true);
       } else {
         setError(true);
       }
     } catch {
-      setError(true);
+      setNetworkError(true);
     } finally {
       setValidating(false);
     }
@@ -231,6 +235,23 @@ export function ScannerScreen() {
           <p style={{ fontWeight: 600, marginBottom: "8px" }}>Código QR no reconocido</p>
           <Button variant="secondary" onClick={() => setError(false)} data-testid="button-scan-again">
             Escanear de nuevo
+          </Button>
+        </div>
+      )}
+
+      {/* Error de red — distinto de QR no reconocido (A.5) */}
+      {networkError && (
+        <div
+          data-testid="scan-network-error"
+          style={{
+            padding: "16px",
+            border: "2px solid var(--border-strong)",
+            textAlign: "center",
+          }}
+        >
+          <p style={{ fontWeight: 600, marginBottom: "8px" }}>Sin conexión al validar. Intente de nuevo.</p>
+          <Button variant="secondary" onClick={() => setNetworkError(false)} data-testid="button-retry-scan">
+            Reintentar
           </Button>
         </div>
       )}

@@ -59,11 +59,9 @@ export default function App() {
           <Route
             path="/demo"
             element={
-              <Protected>
-                <AppShell>
-                  <DemoScreen />
-                </AppShell>
-              </Protected>
+              <AppShell>
+                <DemoScreen />
+              </AppShell>
             }
           />
           <Route path="*" element={<Navigate to="/login" replace />} />

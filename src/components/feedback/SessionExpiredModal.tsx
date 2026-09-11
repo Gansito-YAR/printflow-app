@@ -1,14 +1,23 @@
 // SessionExpiredModal — modal bloqueante cuando la sesión expira.
 // FR-026: Modal bloqueante "Sesión expirada" con botón que redirige a login.
+// A.3: no importa nada de demo. El demo limpia su propio interruptor.
 
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSessionStore } from "../../store/session";
-import { useDemoStore } from "../../store/demo";
 
 export function SessionExpiredModal() {
   const navigate = useNavigate();
   const session = useSessionStore((s) => s.session);
   const logout = useSessionStore((s) => s.logout);
+
+  // M-03: el tick vive dentro del modal, no en AppShell con key={tick}.
+  // Esto evita remontar el componente cada segundo.
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
 
   if (!session) return null;
 
@@ -19,9 +28,6 @@ export function SessionExpiredModal() {
   if (!isExpired) return null;
 
   const handleGoToLogin = () => {
-    // Desactivar el interruptor de sesión vencida del demo
-    // para que el próximo login no dispare el modal de nuevo
-    useDemoStore.getState().setSessionExpired(false);
     logout();
     navigate("/login");
   };

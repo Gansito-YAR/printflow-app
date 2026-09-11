@@ -1,11 +1,10 @@
 // PrintFlow AI — session.ts
 // Store de Zustand para sesión y conexión.
 // Constitution Principle I: el candado consume este store.
-// Fase 1.5: isOnline se ve afectado por el interruptor de demo.
+// A.3: sin imports de demo. El demo escribe aquí, no al revés.
 
 import { create } from "zustand";
 import type { SessionDTO } from "../data/contracts";
-import { useDemoStore } from "./demo";
 
 interface SessionState {
   session: SessionDTO | null;
@@ -22,12 +21,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   login: (session) => set({ session }),
   logout: () => set({ session: null }),
   setOnline: (online) => set({ isOnline: online }),
-  getEffectiveOnline: () => {
-    // Si el demo está forzando offline, isOnline es false
-    const demoOffline = useDemoStore.getState().offline;
-    if (demoOffline) return false;
-    return get().isOnline;
-  },
+  getEffectiveOnline: () => get().isOnline,
 }));
 
 // Listeners para online/offline reales del navegador

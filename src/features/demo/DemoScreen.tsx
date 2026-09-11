@@ -5,7 +5,6 @@
 import { useNavigate } from "react-router-dom";
 import { useDemoStore } from "../../store/demo";
 import { useSessionStore } from "../../store/session";
-import { gateway } from "../../data/mocks/mockGateway";
 import { FIXTURE_LIST } from "../../data/mocks/fixtures";
 import { CrashTrigger } from "./CrashTrigger";
 
@@ -69,16 +68,9 @@ export function DemoScreen() {
   const session = useSessionStore((s) => s.session);
   const logout = useSessionStore((s) => s.logout);
 
-  // Sincronizar el gateway con los interruptores del demo
-  const syncGateway = () => {
-    gateway.setOnline(!demo.offline);
-    gateway.setConfirmMode(demo.getConfirmMode());
-    gateway.setRouteMode(demo.getRouteMode());
-    gateway.setSessionExpired(demo.sessionExpired);
-  };
-
+  // M-02: los setters del demo store sincronizan el gateway automáticamente.
+  // DemoScreen ya no llama al gateway directamente.
   const handleFixture = (fixtureId: string) => {
-    syncGateway();
     if (fixtureId === "F7-QR-DESCONOCIDO") {
       navigate(`/resultado/F7-QR-DESCONOCIDO`);
       return;
@@ -88,12 +80,10 @@ export function DemoScreen() {
 
   const handleToggleOffline = (v: boolean) => {
     demo.setOffline(v);
-    gateway.setOnline(!v);
   };
 
   const handleToggleSessionExpired = (v: boolean) => {
     demo.setSessionExpired(v);
-    gateway.setSessionExpired(v);
     // Si se activa y hay sesión activa, poner el deadline en el pasado
     // para que el SessionExpiredModal se dispare inmediatamente
     if (v && session) {
@@ -107,26 +97,18 @@ export function DemoScreen() {
 
   const handleToggleConfirmError = (v: boolean) => {
     demo.setConfirmError(v);
-    if (v) demo.setConfirmAlready(false);
-    gateway.setConfirmMode(demo.getConfirmMode());
   };
 
   const handleToggleConfirmAlready = (v: boolean) => {
     demo.setConfirmAlready(v);
-    if (v) demo.setConfirmError(false);
-    gateway.setConfirmMode(demo.getConfirmMode());
   };
 
   const handleToggleRouteEmpty = (v: boolean) => {
     demo.setRouteEmpty(v);
-    if (v) demo.setRouteError(false);
-    gateway.setRouteMode(demo.getRouteMode());
   };
 
   const handleToggleRouteError = (v: boolean) => {
     demo.setRouteError(v);
-    if (v) demo.setRouteEmpty(false);
-    gateway.setRouteMode(demo.getRouteMode());
   };
 
   const handleCrash = () => {

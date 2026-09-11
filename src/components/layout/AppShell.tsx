@@ -3,14 +3,14 @@
 // FR-026: SessionExpiredModal integrado.
 // Fase 1.5: botón [DEMO] en header + UpdateToast integrado.
 
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { ConnectionIndicator } from "./ConnectionIndicator";
 import { BottomNav } from "./BottomNav";
 import { OfflineBanner } from "../feedback/OfflineBanner";
 import { SessionExpiredModal } from "../feedback/SessionExpiredModal";
 import { UpdateToast } from "../feedback/UpdateToast";
-import { useDemoStore } from "../../store/demo";
+import { useAppStore } from "../../store/app";
 
 interface AppShellProps {
   children: ReactNode;
@@ -19,14 +19,7 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
   const isLogin = location.pathname === "/login";
-  const [tick, setTick] = useState(0);
-  const updateAvailable = useDemoStore((s) => s.updateAvailable);
-
-  // Verificar expiración de sesión cada segundo (research.md R7)
-  useEffect(() => {
-    const interval = setInterval(() => setTick((t) => t + 1), 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const updateAvailable = useAppStore((s) => s.updateAvailable);
 
   const handleUpdate = () => {
     window.location.reload();
@@ -98,7 +91,7 @@ export function AppShell({ children }: AppShellProps) {
       {/* UpdateToast — Fase 1.5 */}
       {!isLogin && <UpdateToast visible={updateAvailable} onUpdate={handleUpdate} />}
       {!isLogin && <BottomNav />}
-      <SessionExpiredModal key={tick} />
+      <SessionExpiredModal />
     </div>
   );
 }
