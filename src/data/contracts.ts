@@ -54,10 +54,16 @@ export interface RouteItemDTO {
   promisedDate: string | null; // ISO 8601, null = datos incompletos
 }
 
+/** Código legible por máquina del fallo al confirmar entrega */
+export type ConfirmFailureCode =
+  | "ALREADY_DELIVERED"
+  | "REJECTED_BY_RULE"
+  | "UNKNOWN";
+
 /** Resultado de confirmar entrega */
 export type ConfirmDeliveryResult =
   | { ok: true; deliveredAt: string }
-  | { ok: false; reason: string };
+  | { ok: false; code: ConfirmFailureCode; reason: string };
 
 /** Parámetros de entrada para evaluateDeliveryGuard */
 export interface GuardInput {

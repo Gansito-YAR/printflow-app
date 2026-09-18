@@ -1,8 +1,13 @@
 // PrintFlow AI — demo slice (Zustand)
 // Fase 1.5: Toda la lógica de demo vive aquí, aislada de session.
 // Debe poder borrarse en un solo commit cuando se conecte la API real.
+// A.3: el demo ESCRIBE en los stores de producción, no al revés.
 
 import { create } from "zustand";
+import { useSessionStore } from "./session";
+import { useAppStore } from "./app";
+import { useScannerStore } from "./scanner";
+import { gateway } from "../data/mocks/mockGateway";
 
 type ConfirmMode = "OK" | "ERROR" | "ALREADY_REGISTERED";
 type RouteMode = "NORMAL" | "EMPTY" | "ERROR";
@@ -20,7 +25,7 @@ interface DemoState {
   cameraPermissionDenied: boolean;
   updateAvailable: boolean;
 
-  // Setters
+  // Setters — empujan el valor hacia los stores de producción
   setOffline: (v: boolean) => void;
   setSessionExpired: (v: boolean) => void;
   setConfirmError: (v: boolean) => void;
@@ -45,20 +50,52 @@ export const useDemoStore = create<DemoState>((set, get) => ({
   routeEmpty: false,
   routeError: false,
   crash: false,
-  supportsTorch: true, // encendido por defecto en modo demo
+  supportsTorch: true,
   cameraPermissionDenied: false,
   updateAvailable: false,
 
-  setOffline: (v) => set({ offline: v }),
-  setSessionExpired: (v) => set({ sessionExpired: v }),
-  setConfirmError: (v) => set({ confirmError: v }),
-  setConfirmAlready: (v) => set({ confirmAlready: v }),
-  setRouteEmpty: (v) => set({ routeEmpty: v }),
-  setRouteError: (v) => set({ routeError: v }),
+  setOffline: (v) => {
+    set({ offline: v });
+    useSessionStore.getState().setOnline(!v);
+    gateway.setOnline(!v);
+  },
+  setSessionExpired: (v) => {
+    set({ sessionExpired: v });
+    gateway.setSessionExpired(v);
+  },
+  setConfirmError: (v) => {
+    set({ confirmError: v });
+    if (v) set({ confirmAlready: false });
+    gateway.setConfirmMode(get().confirmError ? "ERROR" : get().confirmAlready ? "ALREADY_REGISTERED" : "OK");
+  },
+  setConfirmAlready: (v) => {
+    set({ confirmAlready: v });
+    if (v) set({ confirmError: false });
+    gateway.setConfirmMode(get().confirmError ? "ERROR" : get().confirmAlready ? "ALREADY_REGISTERED" : "OK");
+  },
+  setRouteEmpty: (v) => {
+    set({ routeEmpty: v });
+    if (v) set({ routeError: false });
+    gateway.setRouteMode(get().routeError ? "ERROR" : get().routeEmpty ? "EMPTY" : "NORMAL");
+  },
+  setRouteError: (v) => {
+    set({ routeError: v });
+    if (v) set({ routeEmpty: false });
+    gateway.setRouteMode(get().routeError ? "ERROR" : get().routeEmpty ? "EMPTY" : "NORMAL");
+  },
   setCrash: (v) => set({ crash: v }),
-  setSupportsTorch: (v) => set({ supportsTorch: v }),
-  setCameraPermissionDenied: (v) => set({ cameraPermissionDenied: v }),
-  setUpdateAvailable: (v) => set({ updateAvailable: v }),
+  setSupportsTorch: (v) => {
+    set({ supportsTorch: v });
+    useScannerStore.getState().setSupportsTorch(v);
+  },
+  setCameraPermissionDenied: (v) => {
+    set({ cameraPermissionDenied: v });
+    useScannerStore.getState().setCameraPermissionDenied(v);
+  },
+  setUpdateAvailable: (v) => {
+    set({ updateAvailable: v });
+    useAppStore.getState().setUpdateAvailable(v);
+  },
 
   getConfirmMode: () => {
     const s = get();
@@ -73,3 +110,15 @@ export const useDemoStore = create<DemoState>((set, get) => ({
     return "NORMAL";
   },
 }));
+
+// A.3: el demo limpia su propio interruptor de sesión vencida cuando
+// la sesión se cierra (desde el modal, desde /demo, o desde donde sea).
+// Así el próximo login devuelve una sesión normal.
+if (typeof window !== "undefined") {
+  useSessionStore.subscribe((state, prev) => {
+    if (state.session === null && prev.session !== null) {
+      useDemoStore.getState().setSessionExpired(false);
+      gateway.setSessionExpired(false);
+    }
+  });
+}

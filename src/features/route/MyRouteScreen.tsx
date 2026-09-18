@@ -121,6 +121,7 @@ export function MyRouteScreen() {
         ))}
         <button
           data-testid="button-refresh"
+          aria-label="Actualizar ruta"
           onClick={handleRefresh}
           disabled={!isOnline || refreshing}
           style={{

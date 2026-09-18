@@ -80,10 +80,10 @@ export class MockGateway implements PrintflowGateway {
       throw new Error("NETWORK_ERROR");
     }
     if (this.confirmMode === "ERROR") {
-      return { ok: false, reason: "Entrega rechazada por el sistema" };
+      return { ok: false, code: "REJECTED_BY_RULE", reason: "Entrega rechazada por el sistema" };
     }
     if (this.confirmMode === "ALREADY_REGISTERED") {
-      return { ok: false, reason: "La entrega ya había sido registrada" };
+      return { ok: false, code: "ALREADY_DELIVERED", reason: "La entrega ya había sido registrada" };
     }
     return { ok: true, deliveredAt: new Date().toISOString() };
   }
