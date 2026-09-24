@@ -69,7 +69,7 @@ export function DeliveryResultScreen() {
 
   if (networkError) {
     return (
-      <div data-testid="scan-network-error" style={{ padding: "24px 16px", textAlign: "center", display: "flex", flexDirection: "column", gap: "16px" }}>
+      <div data-testid="scan-network-error" style={{ padding: "24px 16px", textAlign: "center", display: "flex", flexDirection: "column", gap: "16px", border: "2px solid var(--state-warning-border)", backgroundColor: "var(--state-warning-bg)", color: "var(--state-warning-ink)" }}>
         <p style={{ fontWeight: 600, marginBottom: "16px" }}>Sin conexión al validar. Intente de nuevo.</p>
         <Button variant="secondary" fullWidth onClick={() => navigate("/escanear")} data-testid="button-retry-scan">
           Reintentar
@@ -80,7 +80,7 @@ export function DeliveryResultScreen() {
 
   if (notFound || !order) {
     return (
-      <div data-testid="qr-not-recognized" style={{ padding: "24px 16px", textAlign: "center" }}>
+      <div data-testid="qr-not-recognized" style={{ padding: "24px 16px", textAlign: "center", border: "2px solid var(--state-blocked-border)", backgroundColor: "var(--state-blocked-bg)", color: "var(--state-blocked-ink)" }}>
         <p style={{ fontWeight: 600, marginBottom: "16px" }}>Código QR no reconocido</p>
       </div>
     );

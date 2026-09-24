@@ -35,7 +35,7 @@ function Toggle({ label, testId, value, onChange }: ToggleProps) {
           width: "48px",
           height: "24px",
           border: "2px solid var(--border-strong)",
-          backgroundColor: value ? "var(--ink-strong)" : "var(--surface-0)",
+          backgroundColor: value ? "var(--brand-bg)" : "var(--surface-0)",
           position: "relative",
           flexShrink: 0,
         }}
@@ -47,7 +47,7 @@ function Toggle({ label, testId, value, onChange }: ToggleProps) {
             left: value ? "26px" : "2px",
             width: "16px",
             height: "16px",
-            backgroundColor: value ? "var(--surface-0)" : "var(--ink-strong)",
+            backgroundColor: value ? "var(--brand-ink)" : "var(--ink-strong)",
             transition: "left 0.15s",
           }}
         />
@@ -138,8 +138,8 @@ export function DemoScreen() {
       <div
         data-testid="demo-banner"
         style={{
-          backgroundColor: "var(--surface-3)",
-          color: "var(--ink-strong)",
+          backgroundColor: "var(--brand-bg)",
+          color: "var(--brand-ink)",
           padding: "8px 16px",
           fontSize: "12px",
           fontWeight: 600,

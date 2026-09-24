@@ -108,8 +108,8 @@ export function MyRouteScreen() {
               flex: 1,
               height: "48px",
               minHeight: "var(--hitbox-min)",
-              border: filter === f ? "2px solid var(--border-strong)" : "1px solid var(--border-hairline)",
-              backgroundColor: filter === f ? "var(--surface-1)" : "var(--surface-0)",
+              border: filter === f ? "2px solid var(--brand-bg)" : "1px solid var(--border-hairline)",
+              backgroundColor: filter === f ? "var(--brand-soft-bg)" : "var(--surface-0)",
               cursor: "pointer",
               fontSize: "14px",
               fontWeight: 600,
@@ -188,10 +188,10 @@ export function MyRouteScreen() {
                       padding: "16px",
                       backgroundColor: "var(--surface-0)",
                       border: status === "overdue" || status === "due-today"
-                        ? "4px solid var(--border-strong)"
+                        ? "4px solid var(--state-blocked-border)"
                         : status === "due-tomorrow"
-                        ? "2px dashed var(--border-strong)"
-                        : "1px solid var(--border-hairline)",
+                        ? "2px dashed var(--state-warning-border)"
+                        : "1px solid var(--state-cleared-border)",
                     }}
                   >
                     <p style={{ fontSize: "16px", fontWeight: 600, marginBottom: "8px" }}>

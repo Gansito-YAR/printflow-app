@@ -44,7 +44,7 @@ export function BlockedDeliveryPanel({ order, orderToken, onRevalidate }: Blocke
         display: "flex",
         flexDirection: "column",
         gap: "16px",
-        border: "4px solid var(--border-strong)",
+        border: "4px solid var(--state-blocked-border)",
       }}
     >
       <StatusBadge variant="blocked" label="ENTREGA BLOQUEADA" />
@@ -62,7 +62,7 @@ export function BlockedDeliveryPanel({ order, orderToken, onRevalidate }: Blocke
           <p style={{ fontSize: "18px", fontWeight: 700 }}>${order.balanceDue}</p>
         </div>
       )}
-      <p style={{ fontSize: "14px" }}>
+      <p style={{ fontSize: "14px", color: "var(--state-blocked-ink)", fontWeight: 600 }}>
         El sistema impide la entrega. Solicite la liquidación y la aprobación del cobro por el administrador.
       </p>
       <div style={{ display: "flex", gap: "8px" }}>

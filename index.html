@@ -3,8 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#111111" />
+    <meta name="theme-color" content="#F8F8F8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101010" media="(prefers-color-scheme: dark)" />
+    <link rel="apple-touch-icon" href="/manifest-icons/apple-touch-icon.png" />
     <title>PrintFlow — Entregas</title>
+    <script>
+      // Aplica el tema ANTES del primer pintado para evitar parpadeo (Fase 2 §3.3).
+      // En modo "system" no se estampa data-theme: resuelve el CSS con
+      // @media (prefers-color-scheme). localStorage puede lanzar en privado.
+      try {
+        var t = localStorage.getItem("printflow-theme");
+        if (t === "light" || t === "dark") {
+          document.documentElement.setAttribute("data-theme", t);
+        }
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>
