@@ -95,8 +95,8 @@ export function ScannerScreen() {
                 height: "48px",
                 minHeight: "var(--hitbox-min)",
                 padding: "0 16px",
-                backgroundColor: "var(--ink-strong)",
-                color: "var(--surface-0)",
+                backgroundColor: "var(--action-primary-bg)",
+                color: "var(--action-primary-ink)",
                 border: "2px solid var(--ink-strong)",
                 fontSize: "14px",
                 cursor: "pointer",
@@ -128,10 +128,10 @@ export function ScannerScreen() {
               }}
             >
               {[
-                { top: 0, left: 0, borderTop: "4px solid var(--border-strong)", borderLeft: "4px solid var(--border-strong)" },
-                { top: 0, right: 0, borderTop: "4px solid var(--border-strong)", borderRight: "4px solid var(--border-strong)" },
-                { bottom: 0, left: 0, borderBottom: "4px solid var(--border-strong)", borderLeft: "4px solid var(--border-strong)" },
-                { bottom: 0, right: 0, borderBottom: "4px solid var(--border-strong)", borderRight: "4px solid var(--border-strong)" },
+                { top: 0, left: 0, borderTop: "4px solid var(--brand-bg)", borderLeft: "4px solid var(--brand-bg)" },
+                { top: 0, right: 0, borderTop: "4px solid var(--brand-bg)", borderRight: "4px solid var(--brand-bg)" },
+                { bottom: 0, left: 0, borderBottom: "4px solid var(--brand-bg)", borderLeft: "4px solid var(--brand-bg)" },
+                { bottom: 0, right: 0, borderBottom: "4px solid var(--brand-bg)", borderRight: "4px solid var(--brand-bg)" },
               ].map((style, i) => (
                 <div
                   key={i}
@@ -153,15 +153,16 @@ export function ScannerScreen() {
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  backgroundColor: "var(--surface-3)",
-                  opacity: 0.9,
+                  backgroundColor: "var(--state-warning-bg)",
+                  opacity: 0.95,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   padding: "16px",
                   textAlign: "center",
                   fontSize: "14px",
-                  color: "var(--ink-strong)",
+                  fontWeight: 600,
+                  color: "var(--state-warning-ink)",
                 }}
               >
                 Sin conexión. Muévase a un área con cobertura para validar la entrega
@@ -180,8 +181,8 @@ export function ScannerScreen() {
             height: "48px",
             minWidth: "48px",
             padding: "0 16px",
-            backgroundColor: torchOn ? "var(--ink-strong)" : "transparent",
-            color: torchOn ? "var(--surface-0)" : "var(--ink-strong)",
+            backgroundColor: torchOn ? "var(--brand-bg)" : "transparent",
+            color: torchOn ? "var(--brand-ink)" : "var(--ink-strong)",
             border: "2px solid var(--border-strong)",
             fontSize: "13px",
             fontWeight: 600,
@@ -228,7 +229,9 @@ export function ScannerScreen() {
           data-testid="qr-not-recognized"
           style={{
             padding: "16px",
-            border: "2px solid var(--border-strong)",
+            border: "2px solid var(--state-blocked-border)",
+            backgroundColor: "var(--state-blocked-bg)",
+            color: "var(--state-blocked-ink)",
             textAlign: "center",
           }}
         >
@@ -245,7 +248,9 @@ export function ScannerScreen() {
           data-testid="scan-network-error"
           style={{
             padding: "16px",
-            border: "2px solid var(--border-strong)",
+            border: "2px solid var(--state-warning-border)",
+            backgroundColor: "var(--state-warning-bg)",
+            color: "var(--state-warning-ink)",
             textAlign: "center",
           }}
         >

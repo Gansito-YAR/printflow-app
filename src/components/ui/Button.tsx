@@ -49,8 +49,8 @@ export function Button({
   const variantStyle: React.CSSProperties =
     variant === "primary"
       ? {
-          backgroundColor: "var(--ink-strong)",
-          color: "var(--surface-0)",
+          backgroundColor: "var(--action-primary-bg)",
+          color: "var(--action-primary-ink)",
           border: "2px solid var(--ink-strong)",
         }
       : {
@@ -60,7 +60,7 @@ export function Button({
         };
 
   const errorStyle: React.CSSProperties = error
-    ? { border: "2px solid var(--border-strong)" }
+    ? { border: "2px solid var(--state-blocked-border)" }
     : {};
 
   return (

@@ -64,29 +64,25 @@ export function LoginScreen() {
           borderBottom: "1px solid var(--border-hairline)",
         }}
       >
-        <div
+        <img
+          src="/brand/logo-mark.png"
+          alt="Imprenta Escalante"
           data-testid="logo-placeholder"
           style={{
             width: "32px",
             height: "32px",
             maxWidth: "40px",
             maxHeight: "40px",
-            backgroundColor: "var(--surface-2)",
+            objectFit: "cover",
+            borderRadius: "var(--radius-sm)",
             border: "1px solid var(--border-hairline)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "10px",
-            color: "var(--ink-muted)",
           }}
-        >
-          [LOGO]
-        </div>
+        />
       </header>
       <main
         style={{
           flex: 1,
-          padding: "96px 16px 16px",
+          padding: "48px 16px 16px",
           display: "flex",
           flexDirection: "column",
           gap: "16px",
@@ -95,6 +91,23 @@ export function LoginScreen() {
           width: "100%",
         }}
       >
+        {/* Marca principal del login */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+          <img
+            src="/brand/logo-mark.png"
+            alt="Imprenta Escalante"
+            style={{
+              width: "120px",
+              height: "102px",
+              objectFit: "cover",
+              borderRadius: "var(--radius-md)",
+              border: "1px solid var(--border-hairline)",
+            }}
+          />
+          <p style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.1em", color: "var(--brand-ink-accent)", textTransform: "uppercase" }}>
+            PrintFlow · Entregas
+          </p>
+        </div>
         <Input
           label="Correo"
           type="email"
@@ -122,10 +135,11 @@ export function LoginScreen() {
             role="alert"
             data-testid="login-error"
             style={{
-              color: "var(--ink-strong)",
+              color: "var(--state-blocked-ink)",
               fontSize: "14px",
               padding: "8px",
-              border: "2px solid var(--border-strong)",
+              border: "2px solid var(--state-blocked-border)",
+              backgroundColor: "var(--state-blocked-bg)",
             }}
           >
             Credenciales inválidas
@@ -167,12 +181,13 @@ export function LoginScreen() {
             marginTop: "24px",
             padding: "16px",
             border: "1px solid var(--border-hairline)",
+            backgroundColor: "var(--brand-soft-bg)",
             fontSize: "12px",
             color: "var(--ink-muted)",
             textAlign: "center",
           }}
         >
-          <p style={{ fontWeight: 600, marginBottom: "8px" }}>
+          <p style={{ fontWeight: 600, marginBottom: "8px", color: "var(--brand-ink-accent)" }}>
             [MODO DEMO]
           </p>
           <p>Correo: {MOCK_CREDENTIALS.email}</p>
@@ -186,7 +201,7 @@ export function LoginScreen() {
             textAlign: "center",
             fontSize: "13px",
             fontWeight: 600,
-            color: "var(--ink-muted)",
+            color: "var(--brand-ink-accent)",
             textDecoration: "none",
             padding: "8px",
             border: "1px solid var(--border-hairline)",

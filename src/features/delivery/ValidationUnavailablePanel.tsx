@@ -23,7 +23,8 @@ export function ValidationUnavailablePanel({ reason = "generic" }: Props) {
         display: "flex",
         flexDirection: "column",
         gap: "16px",
-        border: "2px solid var(--border-strong)",
+        border: "2px solid var(--state-neutral-border)",
+        backgroundColor: "var(--state-neutral-bg)",
       }}
     >
       <StatusBadge variant="error" label="VALIDACIÓN NO DISPONIBLE" />

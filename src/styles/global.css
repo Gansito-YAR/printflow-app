@@ -20,6 +20,19 @@ body {
   color: var(--ink-strong);
   margin: 0;
   padding: 0;
+  /* Transición suave entre temas: solo colores, nunca layout (Fase 2 §6.2) */
+  transition: background-color var(--transition-theme), color var(--transition-theme);
+}
+
+/* Respeta prefers-reduced-motion en toda la app (Fase 2 §6.2) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Trama diagonal para criticidad (sin color) */

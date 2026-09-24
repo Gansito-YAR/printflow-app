@@ -15,8 +15,8 @@ export default defineConfig({
         description: "PWA para instaladores de Imprenta Escalante",
         display: "standalone",
         orientation: "portrait",
-        background_color: "#ffffff",
-        theme_color: "#111111",
+        background_color: "#101010",
+        theme_color: "#F89A16",
         icons: [
           {
             src: "/manifest-icons/icon-192.png",

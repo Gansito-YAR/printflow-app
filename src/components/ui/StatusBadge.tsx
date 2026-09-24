@@ -16,29 +16,42 @@ interface StatusBadgeProps {
   "data-testid"?: string;
 }
 
+// Fase 2: color como refuerzo. Las tramas, bordes y mayúsculas se conservan.
 const VARIANT_STYLES: Record<BadgeVariant, React.CSSProperties> = {
   blocked: {
-    border: "4px solid var(--border-strong)",
-    backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 4px, var(--surface-3) 4px, var(--surface-3) 8px)",
+    border: "4px solid var(--state-blocked-border)",
+    color: "var(--state-blocked-ink)",
+    backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 4px, var(--state-blocked-bg) 4px, var(--state-blocked-bg) 8px)",
   },
   overdue: {
-    border: "4px solid var(--border-strong)",
-    backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 4px, var(--surface-3) 4px, var(--surface-3) 8px)",
+    border: "4px solid var(--state-blocked-border)",
+    color: "var(--state-blocked-ink)",
+    backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 4px, var(--state-blocked-bg) 4px, var(--state-blocked-bg) 8px)",
   },
   "due-today": {
-    border: "4px solid var(--border-strong)",
+    border: "4px solid var(--state-warning-border)",
+    color: "var(--state-warning-ink)",
+    backgroundColor: "var(--state-warning-bg)",
   },
   "due-tomorrow": {
-    border: "2px dashed var(--border-strong)",
+    border: "2px dashed var(--state-neutral-border)",
+    color: "var(--state-neutral-ink)",
+    backgroundColor: "var(--state-neutral-bg)",
   },
   "on-time": {
-    border: "1px solid var(--border-hairline)",
+    border: "1px solid var(--state-cleared-border)",
+    color: "var(--state-cleared-ink)",
+    backgroundColor: "var(--state-cleared-bg)",
   },
   authorized: {
-    border: "4px double var(--border-strong)",
+    border: "4px double var(--state-cleared-border)",
+    color: "var(--state-cleared-ink)",
+    backgroundColor: "var(--state-cleared-bg)",
   },
   error: {
-    border: "2px solid var(--border-strong)",
+    border: "2px solid var(--state-blocked-border)",
+    color: "var(--state-blocked-ink)",
+    backgroundColor: "var(--state-blocked-bg)",
   },
 };
 

@@ -11,8 +11,8 @@ export function OfflineBanner() {
     <div
       data-testid="offline-banner"
       style={{
-        backgroundColor: "var(--surface-3)",
-        color: "var(--ink-strong)",
+        backgroundColor: "var(--state-warning-bg)",
+        color: "var(--state-warning-ink)",
         textAlign: "center",
         padding: "8px 16px",
         fontSize: "14px",

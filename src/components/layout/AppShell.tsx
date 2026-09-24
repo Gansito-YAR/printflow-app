@@ -6,6 +6,7 @@
 import { type ReactNode } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { ConnectionIndicator } from "./ConnectionIndicator";
+import { ThemeToggle } from "./ThemeToggle";
 import { BottomNav } from "./BottomNav";
 import { OfflineBanner } from "../feedback/OfflineBanner";
 import { SessionExpiredModal } from "../feedback/SessionExpiredModal";
@@ -43,24 +44,21 @@ export function AppShell({ children }: AppShellProps) {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <div
+          <img
+            src="/brand/logo-mark.png"
+            alt="Imprenta Escalante"
             data-testid="logo-placeholder"
             style={{
               width: "32px",
               height: "32px",
               maxWidth: "40px",
               maxHeight: "40px",
-              backgroundColor: "var(--surface-2)",
+              objectFit: "cover",
+              borderRadius: "var(--radius-sm)",
               border: "1px solid var(--border-hairline)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "10px",
-              color: "var(--ink-muted)",
+              flexShrink: 0,
             }}
-          >
-            [LOGO]
-          </div>
+          />
           {/* Botón [DEMO] discreto — Fase 1.5 */}
           <Link
             to="/demo"
@@ -77,7 +75,10 @@ export function AppShell({ children }: AppShellProps) {
             [DEMO]
           </Link>
         </div>
-        <ConnectionIndicator />
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <ThemeToggle />
+          <ConnectionIndicator />
+        </div>
       </header>
       <main
         style={{

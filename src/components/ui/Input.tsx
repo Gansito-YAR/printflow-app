@@ -60,7 +60,7 @@ export function Input({
             fontFamily: "inherit",
             color: "var(--ink-strong)",
             backgroundColor: "var(--surface-0)",
-            border: error ? "2px solid var(--border-strong)" : "1px solid var(--border-hairline)",
+            border: error ? "2px solid var(--state-blocked-border)" : "1px solid var(--border-hairline)",
             borderRadius: "0",
             outline: "none",
             cursor: disabled ? "not-allowed" : "text",

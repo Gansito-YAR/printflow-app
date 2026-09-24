@@ -15,7 +15,7 @@ export function BottomNav() {
     fontWeight: 600,
     color: "var(--ink-strong)",
     textDecoration: "none",
-    borderTop: isActive ? "4px solid var(--border-strong)" : "1px solid var(--border-hairline)",
+    borderTop: isActive ? "4px solid var(--brand-bg)" : "1px solid var(--border-hairline)",
     backgroundColor: "var(--surface-0)",
   });
 

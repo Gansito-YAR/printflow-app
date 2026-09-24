@@ -14,7 +14,8 @@ export function NotDeliverablePanel() {
         display: "flex",
         flexDirection: "column",
         gap: "16px",
-        border: "1px solid var(--border-hairline)",
+        border: "1px solid var(--state-neutral-border)",
+        backgroundColor: "var(--state-neutral-bg)",
       }}
     >
       <p style={{ fontSize: "16px", fontWeight: 600 }}>Este pedido no está listo para entrega</p>

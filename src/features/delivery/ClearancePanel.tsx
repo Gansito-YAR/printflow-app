@@ -77,7 +77,7 @@ export function ClearancePanel({ order }: ClearancePanelProps) {
         display: "flex",
         flexDirection: "column",
         gap: "16px",
-        border: "4px double var(--border-strong)",
+        border: "4px double var(--state-cleared-border)",
       }}
     >
       <StatusBadge variant="authorized" label="AUTORIZADO PARA ENTREGA" />
@@ -89,12 +89,12 @@ export function ClearancePanel({ order }: ClearancePanelProps) {
         <p style={{ fontSize: "14px", color: "var(--ink-muted)" }}>Producto</p>
         <p style={{ fontSize: "16px", fontWeight: 600 }}>{order.productLabel}</p>
       </div>
-      <p style={{ fontSize: "14px", fontWeight: 600 }}>PAGO CONFIRMADO. Saldo: $0.00</p>
+      <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--state-cleared-ink)" }}>PAGO CONFIRMADO. Saldo: $0.00</p>
       {state === "error" && (
         <p
           role="alert"
           data-testid="delivery-error"
-          style={{ fontSize: "14px", padding: "8px", border: "2px solid var(--border-strong)" }}
+          style={{ fontSize: "14px", padding: "8px", border: "2px solid var(--state-blocked-border)", color: "var(--state-blocked-ink)", backgroundColor: "var(--state-blocked-bg)" }}
         >
           No se pudo confirmar la entrega. Reconsulte el estado.
         </p>

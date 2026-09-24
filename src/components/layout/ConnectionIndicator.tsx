@@ -23,8 +23,8 @@ export function ConnectionIndicator() {
           width: "8px",
           height: "8px",
           borderRadius: "50%",
-          border: isOnline ? "none" : "1px solid var(--ink-muted)",
-          backgroundColor: isOnline ? "var(--ink-strong)" : "transparent",
+          border: isOnline ? "none" : "1px solid var(--state-warning-ink)",
+          backgroundColor: isOnline ? "var(--state-cleared-border)" : "transparent",
         }}
       />
       {isOnline ? "EN LÍNEA" : "SIN CONEXIÓN"}
