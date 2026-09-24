@@ -23,7 +23,8 @@ export function ThemeToggle() {
   const setPreference = useThemeStore((s) => s.setPreference);
 
   const cycle = () => {
-    const next = ORDER[(ORDER.indexOf(preference) + 1) % ORDER.length];
+    const idx = ORDER.indexOf(preference);
+    const next = ORDER[(idx + 1) % ORDER.length] ?? "system";
     setPreference(next);
   };
 
