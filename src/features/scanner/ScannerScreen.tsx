@@ -8,7 +8,7 @@ import { PlaceholderBox } from "../../components/ui/PlaceholderBox";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 
-import { isValidPayload } from "../../data";
+import { isMock, isValidPayload } from "../../data";
 import { useSessionStore } from "../../store/session";
 import { useScannerStore } from "../../store/scanner";
 
@@ -204,7 +204,9 @@ export function ScannerScreen() {
           data-testid="input-manual-token"
         />
         <p style={{ fontSize: "12px", color: "var(--ink-muted)" }}>
-          Modo demo: escriba F1-LIQUIDADO, F2-CON-DEUDA, F3-SALDO-DESCONOCIDO, F4-SOBREPAGO, F5-EN-PRODUCCION, F6-YA-ENTREGADO o F7-QR-DESCONOCIDO
+          {isMock
+            ? "Modo demo: escriba F1-LIQUIDADO, F2-CON-DEUDA, F3-SALDO-DESCONOCIDO, F4-SOBREPAGO, F5-EN-PRODUCCION, F6-YA-ENTREGADO o F7-QR-DESCONOCIDO"
+            : "Si la cámara no lee el código, escriba el código impreso bajo el QR de la remisión."}
         </p>
         <Button
           fullWidth
