@@ -12,6 +12,7 @@ import { DeliveryResultScreen } from "./features/delivery/DeliveryResultScreen";
 import { MyRouteScreen } from "./features/route/MyRouteScreen";
 import { DemoScreen } from "./features/demo/DemoScreen";
 import { useSessionStore } from "./store/session";
+import { isMock } from "./data";
 
 /** Auth guard — redirige a login si no hay sesión activa */
 function Protected({ children }: { children: ReactNode }) {
@@ -56,14 +57,17 @@ export default function App() {
               </Protected>
             }
           />
-          <Route
-            path="/demo"
-            element={
-              <AppShell>
-                <DemoScreen />
-              </AppShell>
-            }
-          />
+          {/* APP-D-02: el panel de demostración solo existe con datos simulados. */}
+          {isMock && (
+            <Route
+              path="/demo"
+              element={
+                <AppShell>
+                  <DemoScreen />
+                </AppShell>
+              }
+            />
+          )}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>

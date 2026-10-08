@@ -10,7 +10,8 @@ export type OrderStatus =
   | "PENDING_DEPOSIT"
   | "IN_PRODUCTION"
   | "READY_FOR_DELIVERY"
-  | "DELIVERED";
+  | "DELIVERED"
+  | "CANCELLED"; // 2026-10-08: aprobado por Isaías (la base puede devolverlo; el candado lo trata como no entregable)
 
 /** Resultado de evaluateDeliveryGuard. Determina qué panel se renderiza. */
 export type GuardDecision =

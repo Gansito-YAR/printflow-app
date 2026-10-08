@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback } from "react";
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { Button } from "../../components/ui/Button";
 import { Spinner } from "../../components/ui/Spinner";
-import { gateway } from "../../data/mocks/mockGateway";
+import { gateway } from "../../data";
 import { useSessionStore } from "../../store/session";
 import type { RouteItemDTO } from "../../data/contracts";
 

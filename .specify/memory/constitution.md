@@ -62,6 +62,14 @@ Cero color de marca. Todos los colores salen de variables en `src/styles/tokens.
 
 ### V. Alcance de Fase
 
+> **Enmienda 1.1.0 (2026-10-08, aprobada por Isaías):** inicia la **Fase 2 — conexión a datos reales**
+> (`MD/Plan_Conexion_App_Supabase.md`). Queda permitido, **solo detrás de `PrintflowGateway`**:
+> Supabase JS (auth + 3 RPC del instalador), la cámara real (Fase 6 del plan) y un Service Worker con
+> `NetworkOnly` para la API (nunca se guarda el saldo). El origen se elige con `VITE_DATA_SOURCE`;
+> **`mock` sigue siendo el valor por defecto** y las reglas de Fase 1 de abajo siguen vigentes en ese modo
+> (incluidas las pruebas sin red). Las pantallas no importan nunca `supabase/` ni `mocks/` directamente:
+> solo `src/data`. Los principios I, II y III no cambian.
+
 Fase 1 es maquetado estructural SIN color y SIN backend.
 
 - Sin Supabase, sin autenticación real, sin `fetch`, sin llamadas de red reales. Todo pasa por la interfaz `PrintflowGateway` implementada con mocks.
@@ -131,4 +139,4 @@ La constitution tiene precedencia sobre cualquier otra práctica o preferencia. 
 - Los PRs deben verificar cumplimiento con la constitution.
 - Para desarrollo runtime, consultar `CLAUDE.md` / `GEMINI.md` para la ruta al plan actual.
 
-**Version**: 1.0.0 | **Ratified**: 2026-08-12 | **Last Amended**: 2026-08-12
+**Version**: 1.1.0 | **Ratified**: 2026-08-12 | **Last Amended**: 2026-10-08 (Principio V: inicio de Fase 2)

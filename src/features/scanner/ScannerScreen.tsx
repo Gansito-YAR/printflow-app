@@ -8,7 +8,7 @@ import { PlaceholderBox } from "../../components/ui/PlaceholderBox";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 
-import { gateway } from "../../data/mocks/mockGateway";
+import { gateway } from "../../data";
 import { useSessionStore } from "../../store/session";
 import { useScannerStore } from "../../store/scanner";
 

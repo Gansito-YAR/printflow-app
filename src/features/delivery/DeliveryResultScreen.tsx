@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Spinner } from "../../components/ui/Spinner";
 import { Button } from "../../components/ui/Button";
-import { gateway } from "../../data/mocks/mockGateway";
+import { gateway } from "../../data";
 import { useSessionStore } from "../../store/session";
 import { evaluateDeliveryGuard } from "./deliveryGuard";
 import { ClearancePanel } from "./ClearancePanel";

@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 
 import { StatusBadge } from "../../components/ui/StatusBadge";
-import { gateway } from "../../data/mocks/mockGateway";
+import { gateway } from "../../data";
 import type { ScannedOrderDTO, ConfirmDeliveryResult } from "../../data/contracts";
 
 interface ClearancePanelProps {

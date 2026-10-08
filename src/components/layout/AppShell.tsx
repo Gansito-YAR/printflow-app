@@ -5,6 +5,7 @@
 
 import { type ReactNode } from "react";
 import { useLocation, Link } from "react-router-dom";
+import { isMock } from "../../data";
 import { ConnectionIndicator } from "./ConnectionIndicator";
 import { ThemeToggle } from "./ThemeToggle";
 import { BottomNav } from "./BottomNav";
@@ -59,21 +60,23 @@ export function AppShell({ children }: AppShellProps) {
               flexShrink: 0,
             }}
           />
-          {/* Botón [DEMO] discreto — Fase 1.5 */}
-          <Link
-            to="/demo"
-            data-testid="button-demo"
-            style={{
-              fontSize: "11px",
-              fontWeight: 600,
-              color: "var(--ink-muted)",
-              textDecoration: "none",
-              padding: "4px 8px",
-              border: "1px solid var(--border-hairline)",
-            }}
-          >
-            [DEMO]
-          </Link>
+          {/* Botón [DEMO] discreto — Fase 1.5. Solo con datos simulados (APP-D-02). */}
+          {isMock && (
+            <Link
+              to="/demo"
+              data-testid="button-demo"
+              style={{
+                fontSize: "11px",
+                fontWeight: 600,
+                color: "var(--ink-muted)",
+                textDecoration: "none",
+                padding: "4px 8px",
+                border: "1px solid var(--border-hairline)",
+              }}
+            >
+              [DEMO]
+            </Link>
+          )}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <ThemeToggle />

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 
 import { StatusBadge } from "../../components/ui/StatusBadge";
-import { gateway } from "../../data/mocks/mockGateway";
+import { gateway } from "../../data";
 import { useSessionStore } from "../../store/session";
 import type { ScannedOrderDTO } from "../../data/contracts";
 

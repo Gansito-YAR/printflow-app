@@ -6,7 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Spinner } from "../../components/ui/Spinner";
-import { gateway } from "../../data/mocks/mockGateway";
+import { gateway, isMock } from "../../data";
 import { MOCK_CREDENTIALS } from "../../data/mocks/fixtures";
 import { useSessionStore } from "../../store/session";
 
@@ -175,41 +175,45 @@ export function LoginScreen() {
           La sesión caduca 12 horas después de iniciar sesión
         </p>
         {/* Credenciales demo visibles siempre — Fase 1.5 */}
-        <div
-          data-testid="demo-credentials"
-          style={{
-            marginTop: "24px",
-            padding: "16px",
-            border: "1px solid var(--border-hairline)",
-            backgroundColor: "var(--brand-soft-bg)",
-            fontSize: "12px",
-            color: "var(--ink-muted)",
-            textAlign: "center",
-          }}
-        >
-          <p style={{ fontWeight: 600, marginBottom: "8px", color: "var(--brand-ink-accent)" }}>
-            [MODO DEMO]
-          </p>
-          <p>Correo: {MOCK_CREDENTIALS.email}</p>
-          <p>Contraseña: {MOCK_CREDENTIALS.password}</p>
-        </div>
-        <Link
-          to="/demo"
-          data-testid="button-demo-login"
-          style={{
-            display: "block",
-            textAlign: "center",
-            fontSize: "13px",
-            fontWeight: 600,
-            color: "var(--brand-ink-accent)",
-            textDecoration: "none",
-            padding: "8px",
-            border: "1px solid var(--border-hairline)",
-            marginTop: "8px",
-          }}
-        >
-          [DEMO] Ir al panel de demostración
-        </Link>
+        {isMock && (
+          <>
+            <div
+              data-testid="demo-credentials"
+              style={{
+                marginTop: "24px",
+                padding: "16px",
+                border: "1px solid var(--border-hairline)",
+                backgroundColor: "var(--brand-soft-bg)",
+                fontSize: "12px",
+                color: "var(--ink-muted)",
+                textAlign: "center",
+              }}
+            >
+              <p style={{ fontWeight: 600, marginBottom: "8px", color: "var(--brand-ink-accent)" }}>
+                [MODO DEMO]
+              </p>
+              <p>Correo: {MOCK_CREDENTIALS.email}</p>
+              <p>Contraseña: {MOCK_CREDENTIALS.password}</p>
+            </div>
+            <Link
+              to="/demo"
+              data-testid="button-demo-login"
+              style={{
+                display: "block",
+                textAlign: "center",
+                fontSize: "13px",
+                fontWeight: 600,
+                color: "var(--brand-ink-accent)",
+                textDecoration: "none",
+                padding: "8px",
+                border: "1px solid var(--border-hairline)",
+                marginTop: "8px",
+              }}
+            >
+              [DEMO] Ir al panel de demostración
+            </Link>
+          </>
+        )}
       </main>
     </div>
   );
