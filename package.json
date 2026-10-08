@@ -9,10 +9,12 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "dev:supabase": "vite --mode supabase"
+    "dev:supabase": "vite --mode supabase",
+    "dev:telefono": "vite --host --mode telefono"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.117",
+    "qr-scanner": "^1.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.0",
@@ -24,6 +26,7 @@
     "@testing-library/react": "^16.0.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-basic-ssl": "^1.2.0",
     "@vitejs/plugin-react": "^4.3.1",
     "jsdom": "^24.1.1",
     "tailwindcss": "^4.0.0",

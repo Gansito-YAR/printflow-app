@@ -1,14 +1,16 @@
 // ScannerScreen — FR-016, FR-017, FR-012.
-// Constitution Principle V: sin cámara real, viewport placeholder.
 // Fase 1.5: entrada manual de token, botón cerrar, linterna, permiso de cámara.
+// Fase 6 (APP-06, constitución 1.1.0): con datos reales se usa la cámara del
+// teléfono (CameraScanner). Con el mock se conserva el visor de marcador.
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PlaceholderBox } from "../../components/ui/PlaceholderBox";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 
 import { isMock, isValidPayload } from "../../data";
+import { CameraScanner, type CameraProblem } from "./CameraScanner";
 import { useSessionStore } from "../../store/session";
 import { useScannerStore } from "../../store/scanner";
 
@@ -22,6 +24,15 @@ export function ScannerScreen() {
   const [manualToken, setManualToken] = useState("");
   const [validating, setValidating] = useState(false);
   const [torchOn, setTorchOn] = useState(false);
+  // Fase 6: estado de la cámara real (solo con datos reales).
+  const [cameraProblem, setCameraProblem] = useState<CameraProblem | null>(null);
+  const [cameraKey, setCameraKey] = useState(0); // remontar = volver a pedir la cámara
+  const [realTorch, setRealTorch] = useState(false);
+  const [manualOpen, setManualOpen] = useState(isMock);
+  const lastRead = useRef<{ text: string; at: number } | null>(null);
+
+  const torchAvailable = isMock ? supportsTorch : realTorch;
+  const showCameraProblem = isMock ? cameraDenied : cameraProblem !== null;
 
   // M-01 (APP-04a): aquí solo se valida el formato del código y se navega.
   // La consulta al servidor se hace UNA vez, en la pantalla de resultado.
@@ -36,6 +47,42 @@ export function ScannerScreen() {
     }
     setValidating(true);
     navigate(`/resultado/${encodeURIComponent(token)}`);
+  };
+
+  // APP-06e: lectura de la cámara. Lecturas repetidas del mismo código en 2 s se ignoran.
+  const handleDecoded = (raw: string) => {
+    const text = raw.trim();
+    if (!text || validating || !isOnline) return;
+    const now = Date.now();
+    if (lastRead.current && lastRead.current.text === text && now - lastRead.current.at < 2000) return;
+    lastRead.current = { text, at: now };
+    if (!isValidPayload(text)) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate?.(80);
+    setValidating(true);
+    navigate(`/resultado/${encodeURIComponent(text)}`);
+  };
+
+  const retryCamera = () => {
+    setCameraProblem(null);
+    setCameraKey((k) => k + 1);
+  };
+
+  const PROBLEM_TEXT: Record<CameraProblem, { title: string; detail: string }> = {
+    DENIED: {
+      title: "Permiso de cámara denegado",
+      detail:
+        "Android: toque el candado junto a la dirección → Permisos → Cámara → Permitir. iPhone: Ajustes → Safari → Cámara → Permitir. Después pulse Reintentar.",
+    },
+    NO_CAMERA: { title: "No se encontró una cámara", detail: "Escriba el código impreso bajo el QR de la remisión." },
+    INSECURE: {
+      title: "La cámara requiere una conexión segura (HTTPS)",
+      detail: "Abra la app desde su dirección https. Mientras tanto, escriba el código de la remisión.",
+    },
+    UNKNOWN: { title: "No se pudo abrir la cámara", detail: "Pulse Reintentar o escriba el código de la remisión." },
   };
 
   return (
@@ -65,7 +112,7 @@ export function ScannerScreen() {
 
       {/* Viewport de cámara o placeholder de permiso denegado */}
       <div style={{ position: "relative" }}>
-        {cameraDenied ? (
+        {showCameraProblem ? (
           <div
             data-testid="camera-permission-denied"
             style={{
@@ -78,13 +125,17 @@ export function ScannerScreen() {
               alignItems: "center",
             }}
           >
-            <p style={{ fontSize: "14px", fontWeight: 600 }}>Permiso de cámara denegado</p>
+            <p style={{ fontSize: "14px", fontWeight: 600 }} data-testid="camera-problem-title">
+              {isMock || !cameraProblem ? "Permiso de cámara denegado" : PROBLEM_TEXT[cameraProblem].title}
+            </p>
             <p style={{ fontSize: "13px", color: "var(--ink-muted)" }}>
-              Para escanear códigos QR necesita habilitar el acceso a la cámara en los ajustes de su dispositivo.
+              {isMock || !cameraProblem
+                ? "Para escanear códigos QR necesita habilitar el acceso a la cámara en los ajustes de su dispositivo."
+                : PROBLEM_TEXT[cameraProblem].detail}
             </p>
             <button
               data-testid="button-camera-permission"
-              onClick={() => navigate("/demo")}
+              onClick={() => (isMock ? navigate("/demo") : retryCamera())}
               style={{
                 height: "48px",
                 minHeight: "var(--hitbox-min)",
@@ -96,18 +147,32 @@ export function ScannerScreen() {
                 cursor: "pointer",
               }}
             >
-              Abrir ajustes de cámara
+              {isMock ? "Abrir ajustes de cámara" : "Reintentar"}
             </button>
           </div>
         ) : (
           <>
-            <PlaceholderBox
-              label="CAMERA FEED — NO IMAGE REAL"
-              aspectRatio="4/3"
-              minHeight="288px"
-              trama
-              data-testid="camera-viewport"
-            />
+            {isMock ? (
+              <PlaceholderBox
+                label="CAMERA FEED — NO IMAGE REAL"
+                aspectRatio="4/3"
+                minHeight="288px"
+                trama
+                data-testid="camera-viewport"
+              />
+            ) : (
+              <CameraScanner
+                key={cameraKey}
+                onDecode={handleDecoded}
+                onProblem={(p) => {
+                  setCameraProblem(p);
+                  setManualOpen(true); // sin cámara, la entrada manual queda a la vista
+                }}
+                onTorchSupport={setRealTorch}
+                torchOn={torchOn}
+                paused={!isOnline || validating}
+              />
+            )}
             {/* Retícula 224x224 con 4 esquinas en L */}
             <div
               data-testid="reticule"
@@ -166,8 +231,8 @@ export function ScannerScreen() {
         )}
       </div>
 
-      {/* Botón de linterna — visible en modo demo */}
-      {supportsTorch && !cameraDenied && (
+      {/* Linterna: en demo según el panel; con cámara real solo si la cámara la soporta. */}
+      {torchAvailable && !showCameraProblem && (
         <button
           data-testid="button-torch"
           onClick={() => setTorchOn(!torchOn)}
@@ -192,7 +257,27 @@ export function ScannerScreen() {
         Escanee el código de la remisión
       </p>
 
+      {/* APP-06f: con cámara real, la entrada manual es el respaldo (plegada). */}
+      {!manualOpen && (
+        <button
+          type="button"
+          data-testid="button-open-manual"
+          onClick={() => setManualOpen(true)}
+          style={{
+            minHeight: "var(--hitbox-min)",
+            background: "transparent",
+            border: "1px solid var(--border-hairline)",
+            color: "var(--ink-strong)",
+            fontSize: "14px",
+            cursor: "pointer",
+          }}
+        >
+          ¿No lee el código? Escribirlo
+        </button>
+      )}
+
       {/* Entrada manual de token — Fase 1.5 */}
+      {manualOpen && (
       <div data-testid="manual-token-section" style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Input
           label="Código de la remisión"
@@ -218,6 +303,7 @@ export function ScannerScreen() {
           {validating ? "Validando código…" : "Validar código"}
         </Button>
       </div>
+      )}
 
       {/* QR no reconocido */}
       {error && (
