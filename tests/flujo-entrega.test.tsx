@@ -184,3 +184,30 @@ describe("APP-03: sesión revocada por el servidor", () => {
     setSignOutHook(null);
   });
 });
+
+describe("lectura caducada: revalidar sin volver a escanear", () => {
+  it("ofrece Revalidar y la nueva lectura vuelve a pasar por el candado", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const spy = vi
+      .spyOn(gateway, "scanOrder")
+      .mockResolvedValueOnce({ kind: "FOUND", order: order({ balanceDue: "360.00" }) })
+      .mockResolvedValueOnce({ kind: "FOUND", order: order({ balanceDue: "0.00" }) });
+    useSessionStore.getState().login(session);
+    useSessionStore.getState().setOnline(true);
+    render(
+      <MemoryRouter initialEntries={["/resultado/X"]}>
+        <Routes>
+          <Route path="/resultado/:orderToken" element={<DeliveryResultScreen />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    await screen.findByTestId("blocked-delivery-panel");
+    await vi.advanceTimersByTimeAsync(66_000); // > 60 s: lectura vencida
+    expect(await screen.findByTestId("validation-unavailable-panel")).toBeInTheDocument();
+    expect(screen.queryByTestId("delivery-confirm")).toBeNull();
+    fireEvent.click(screen.getByTestId("button-revalidate"));
+    expect(await screen.findByTestId("delivery-confirm")).toBeInTheDocument(); // ya pagó: verde
+    expect(spy).toHaveBeenCalledTimes(2);
+    vi.useRealTimers();
+  });
+});

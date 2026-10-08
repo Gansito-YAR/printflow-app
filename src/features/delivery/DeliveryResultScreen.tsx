@@ -114,7 +114,11 @@ export function DeliveryResultScreen() {
     case "DENY_DEBT":
       return <BlockedDeliveryPanel order={order} orderToken={orderToken} onRevalidate={handleRevalidate} />;
     case "DENY_INDETERMINATE":
-      return <ValidationUnavailablePanel reason={isReadExpired ? "expired" : "generic"} />;
+      return isReadExpired ? (
+        <ValidationUnavailablePanel reason="expired" orderToken={orderToken} onRevalidate={handleRevalidate} />
+      ) : (
+        <ValidationUnavailablePanel reason="generic" />
+      );
     case "DENY_NOT_DELIVERABLE":
       return <NotDeliverablePanel status={order.status} />;
     default:
