@@ -191,3 +191,17 @@ describe("getMyRoute", () => {
     expect(JSON.stringify(r)).not.toMatch(/balance|saldo|total|\$/i);
   });
 });
+
+describe("getShiftSummary", () => {
+  it("convierte la fila del RPC en el resumen del turno", async () => {
+    const { client, rpc } = fakeClient({
+      rpc: async () => ({ data: [{ delivered_today: 3, pending_today: 5, overdue: 1 }], error: null }),
+    });
+    expect(await new SupabaseGateway(() => client).getShiftSummary()).toEqual({ deliveredToday: 3, pendingToday: 5, overdue: 1 });
+    expect(rpc.mock.calls[0]?.[0]).toBe("get_my_shift_summary");
+  });
+  it("sin filas: todo en cero", async () => {
+    const { client } = fakeClient({ rpc: async () => ({ data: [], error: null }) });
+    expect(await new SupabaseGateway(() => client).getShiftSummary()).toEqual({ deliveredToday: 0, pendingToday: 0, overdue: 0 });
+  });
+});

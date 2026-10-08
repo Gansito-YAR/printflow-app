@@ -5,6 +5,9 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./styles/global.css";
 import { initSession } from "./data/session";
+import { initInstallPrompt } from "./store/install";
+
+initInstallPrompt();
 
 // APP-03b: recupera la sesión guardada (modo supabase) antes de decidir la ruta.
 void initSession();

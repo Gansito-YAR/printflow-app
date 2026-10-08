@@ -26,6 +26,7 @@ import { isMock, isValidPayload } from "../../data";
 import { CameraScanner, type CameraProblem } from "./CameraScanner";
 import { useSessionStore } from "../../store/session";
 import { useScannerStore } from "../../store/scanner";
+import { useScanPrefs, scanFeedback } from "../../store/scanPrefs";
 
 export function ScannerScreen() {
   const navigate = useNavigate();
@@ -36,12 +37,14 @@ export function ScannerScreen() {
   const [networkError, setNetworkError] = useState(false);
   const [manualToken, setManualToken] = useState("");
   const [validating, setValidating] = useState(false);
-  const [torchOn, setTorchOn] = useState(false);
+  // Ajustes de Perfil: linterna al abrir y captura manual primero (solo al montar).
+  const prefs = useRef(useScanPrefs.getState()).current;
+  const [torchOn, setTorchOn] = useState(isMock && prefs.torchOnOpen && supportsTorch);
   // Fase 6: estado de la cámara real (solo con datos reales).
   const [cameraProblem, setCameraProblem] = useState<CameraProblem | null>(null);
   const [cameraKey, setCameraKey] = useState(0); // remontar = volver a pedir la cámara
   const [realTorch, setRealTorch] = useState(false);
-  const [manualOpen, setManualOpen] = useState(isMock);
+  const [manualOpen, setManualOpen] = useState(isMock || prefs.manualFirst);
   const lastRead = useRef<{ text: string; at: number } | null>(null);
 
   const torchAvailable = isMock ? supportsTorch : realTorch;
@@ -74,7 +77,7 @@ export function ScannerScreen() {
       return;
     }
     setError(false);
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate?.(80);
+    scanFeedback();
     setValidating(true);
     navigate(`/resultado/${encodeURIComponent(text)}`);
   };
@@ -219,7 +222,10 @@ export function ScannerScreen() {
                   setCameraProblem(p);
                   setManualOpen(true); // sin cámara, la entrada manual queda a la vista
                 }}
-                onTorchSupport={setRealTorch}
+                onTorchSupport={(supported) => {
+                  setRealTorch(supported);
+                  if (supported && prefs.torchOnOpen) setTorchOn(true);
+                }}
                 torchOn={torchOn}
                 paused={!isOnline || validating}
               />

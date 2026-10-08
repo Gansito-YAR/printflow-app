@@ -55,6 +55,13 @@ export interface RouteItemDTO {
   promisedDate: string | null; // ISO 8601, null = datos incompletos
 }
 
+/** Resumen del turno (pestaña Perfil). ⚠️ Solo conteos, sin dinero. */
+export interface ShiftSummaryDTO {
+  deliveredToday: number; // entregas confirmadas hoy por este instalador
+  pendingToday: number; // listos para entrega con fecha de hoy o vencida
+  overdue: number; // de los pendientes, los vencidos
+}
+
 /** Código legible por máquina del fallo al confirmar entrega */
 export type ConfirmFailureCode =
   | "ALREADY_DELIVERED"

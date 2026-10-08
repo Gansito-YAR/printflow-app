@@ -38,6 +38,7 @@ function withRevocation(inner: PrintflowGateway): PrintflowGateway {
     scanOrder: (payload) => guard(() => inner.scanOrder(payload)),
     confirmDelivery: (token) => guard(() => inner.confirmDelivery(token)),
     getMyRoute: (filter) => guard(() => inner.getMyRoute(filter)),
+    getShiftSummary: () => guard(() => inner.getShiftSummary()),
   };
 }
 

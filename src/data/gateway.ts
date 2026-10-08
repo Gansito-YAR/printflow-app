@@ -8,6 +8,7 @@ import type {
   ScanOutcome,
   ConfirmDeliveryResult,
   RouteItemDTO,
+  ShiftSummaryDTO,
 } from "./contracts";
 
 export interface PrintflowGateway {
@@ -15,4 +16,5 @@ export interface PrintflowGateway {
   scanOrder(payload: string): Promise<ScanOutcome>;
   confirmDelivery(orderToken: string): Promise<ConfirmDeliveryResult>;
   getMyRoute(filter: "today" | "upcoming"): Promise<RouteItemDTO[]>;
+  getShiftSummary(): Promise<ShiftSummaryDTO>;
 }

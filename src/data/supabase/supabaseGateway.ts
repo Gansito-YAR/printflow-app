@@ -10,6 +10,7 @@ import type {
   ConfirmFailureCode,
   OrderStatus,
   RouteItemDTO,
+  ShiftSummaryDTO,
   ScanOutcome,
   SessionDTO,
 } from "../contracts";
@@ -193,5 +194,21 @@ export class SupabaseGateway implements PrintflowGateway {
       productLabel: r.product_label ?? "",
       promisedDate: r.promised_date,
     }));
+  }
+
+  async getShiftSummary(): Promise<ShiftSummaryDTO> {
+    let result;
+    try {
+      result = await this.db.rpc("get_my_shift_summary").abortSignal(timeoutSignal());
+    } catch (err) {
+      this.raise(err);
+    }
+    if (result.error) this.raise(result.error);
+    const row = ((result.data ?? []) as { delivered_today: number; pending_today: number; overdue: number }[])[0];
+    return {
+      deliveredToday: row?.delivered_today ?? 0,
+      pendingToday: row?.pending_today ?? 0,
+      overdue: row?.overdue ?? 0,
+    };
   }
 }

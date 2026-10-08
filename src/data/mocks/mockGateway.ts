@@ -8,6 +8,7 @@ import type {
   ScanOutcome,
   ConfirmDeliveryResult,
   RouteItemDTO,
+  ShiftSummaryDTO,
 } from "../contracts";
 import type { PrintflowGateway } from "../gateway";
 import { FIXTURES, MOCK_CREDENTIALS, MOCK_ROUTE_ITEMS, createMockSession } from "./fixtures";
@@ -22,6 +23,8 @@ function mockDelay(): Promise<void> {
 }
 
 export class MockGateway implements PrintflowGateway {
+  /** Entregas confirmadas en esta sesión de demostración (resumen del turno). */
+  private deliveredCount = 0;
   private isOnline: boolean = true;
   private confirmMode: ConfirmMode = "OK";
   private routeMode: RouteMode = "NORMAL";
@@ -85,7 +88,24 @@ export class MockGateway implements PrintflowGateway {
     if (this.confirmMode === "ALREADY_REGISTERED") {
       return { ok: false, code: "ALREADY_DELIVERED", reason: "La entrega ya había sido registrada" };
     }
+    this.deliveredCount += 1;
     return { ok: true, deliveredAt: new Date().toISOString() };
+  }
+
+  async getShiftSummary(): Promise<ShiftSummaryDTO> {
+    await mockDelay();
+    if (!this.isOnline) {
+      throw new Error("NETWORK_ERROR");
+    }
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const startOfTomorrow = startOfToday + 86400000;
+    const dated = MOCK_ROUTE_ITEMS.filter((i) => i.promisedDate !== null).map((i) => new Date(i.promisedDate as string).getTime());
+    return {
+      deliveredToday: this.deliveredCount,
+      pendingToday: dated.filter((t) => t < startOfTomorrow).length,
+      overdue: dated.filter((t) => t < startOfToday).length,
+    };
   }
 
   async getMyRoute(filter: "today" | "upcoming"): Promise<RouteItemDTO[]> {
