@@ -3,7 +3,7 @@
 // FR-009: hitbox >=60x60px, alto visual 64px.
 // FR-025: disable on first tap, spinner, una sola mutación.
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 
@@ -19,9 +19,16 @@ export function ClearancePanel({ order }: ClearancePanelProps) {
   const navigate = useNavigate();
   const [state, setState] = useState<"idle" | "loading" | "success" | "error" | "already-registered">("idle");
   const [result, setResult] = useState<ConfirmDeliveryResult | null>(null);
+  // Guarda síncrona: dos toques en el mismo instante = una sola mutación.
+  const inFlight = useRef(false);
+  // APP-D-12: si un intento falló por red, un ALREADY_DELIVERED posterior significa
+  // que el primero sí llegó al servidor: es un éxito, no un error.
+  const hadNetworkFailure = useRef(false);
+  const [networkFailed, setNetworkFailed] = useState(false);
 
   const handleConfirm = async () => {
-    if (state === "loading") return; // una sola mutación
+    if (inFlight.current) return;
+    inFlight.current = true;
     setState("loading");
     try {
       const res = await gateway.confirmDelivery(order.orderToken);
@@ -29,16 +36,22 @@ export function ClearancePanel({ order }: ClearancePanelProps) {
       if (res.ok) {
         setState("success");
       } else if (res.code === "ALREADY_DELIVERED") {
-        setState("already-registered");
+        setState(hadNetworkFailure.current ? "success" : "already-registered");
       } else {
         setState("error");
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof Error && err.message === "NETWORK_ERROR") {
+        hadNetworkFailure.current = true;
+        setNetworkFailed(true);
+      }
       setState("error");
+    } finally {
+      inFlight.current = false;
     }
   };
 
-  if (state === "success" && result?.ok) {
+  if (state === "success") {
     return (
       <div
         data-testid="delivery-success"
@@ -46,7 +59,7 @@ export function ClearancePanel({ order }: ClearancePanelProps) {
       >
         <StatusBadge variant="authorized" label="ENTREGA REGISTRADA" />
         <p style={{ fontSize: "14px", color: "var(--ink-muted)" }}>
-          {new Date(result.deliveredAt).toLocaleString("es-MX")}
+          {result?.ok ? new Date(result.deliveredAt).toLocaleString("es-MX") : "La entrega quedó registrada."}
         </p>
         <Button variant="secondary" fullWidth onClick={() => navigate("/escanear")} data-testid="button-scan-another">
           Escanear otro
@@ -96,7 +109,9 @@ export function ClearancePanel({ order }: ClearancePanelProps) {
           data-testid="delivery-error"
           style={{ fontSize: "14px", padding: "8px", border: "2px solid var(--state-blocked-border)", color: "var(--state-blocked-ink)", backgroundColor: "var(--state-blocked-bg)" }}
         >
-          No se pudo confirmar la entrega. Reconsulte el estado.
+          {networkFailed
+            ? "Sin conexión al confirmar. Reintentar es seguro: la entrega no se registra dos veces."
+            : "No se pudo confirmar la entrega. Reconsulte el estado."}
         </p>
       )}
       <Button
@@ -106,7 +121,7 @@ export function ClearancePanel({ order }: ClearancePanelProps) {
         onClick={handleConfirm}
         data-testid="delivery-confirm"
       >
-        {state === "loading" ? "Confirmando entrega…" : "Confirmar entrega física"}
+        {state === "loading" ? "Confirmando entrega…" : networkFailed ? "Reintentar (seguro)" : "Confirmar entrega física"}
       </Button>
     </div>
   );

@@ -12,11 +12,21 @@ import { DeliveryResultScreen } from "./features/delivery/DeliveryResultScreen";
 import { MyRouteScreen } from "./features/route/MyRouteScreen";
 import { DemoScreen } from "./features/demo/DemoScreen";
 import { useSessionStore } from "./store/session";
+import { Spinner } from "./components/ui/Spinner";
 import { isMock } from "./data";
 
 /** Auth guard — redirige a login si no hay sesión activa */
 function Protected({ children }: { children: ReactNode }) {
   const session = useSessionStore((s) => s.session);
+  const status = useSessionStore((s) => s.status);
+  // Mientras se rehidrata la sesión guardada no se manda al login en falso.
+  if (status === "checking") {
+    return (
+      <div data-testid="session-checking" style={{ display: "flex", justifyContent: "center", padding: "48px" }}>
+        <Spinner size="lg" />
+      </div>
+    );
+  }
   if (!session) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }

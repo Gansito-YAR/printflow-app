@@ -2,7 +2,7 @@
 // FR-002: NO se renderiza el botón de entrega aquí.
 // FR-028: botón "Revalidar saldo" que reconsulta el gateway con el mismo orderToken.
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 
@@ -21,16 +21,23 @@ export function BlockedDeliveryPanel({ order, orderToken, onRevalidate }: Blocke
   const navigate = useNavigate();
   const isOnline = useSessionStore((s) => s.getEffectiveOnline());
   const [revalidating, setRevalidating] = useState(false);
+  const [revalidateError, setRevalidateError] = useState(false);
+  const inFlight = useRef(false);
 
   const handleRevalidate = async () => {
+    if (inFlight.current) return; // un solo toque
+    inFlight.current = true;
     setRevalidating(true);
+    setRevalidateError(false);
     try {
       // M-01: revalidar con el token de la URL, no con order.orderToken (payload opaco).
       const outcome = await gateway.scanOrder(orderToken);
-      if (outcome.kind === "FOUND") {
-        onRevalidate(outcome.order);
-      }
+      if (outcome.kind === "FOUND") onRevalidate(outcome.order);
+      else setRevalidateError(true);
+    } catch {
+      setRevalidateError(true);
     } finally {
+      inFlight.current = false;
       setRevalidating(false);
     }
   };
@@ -65,6 +72,11 @@ export function BlockedDeliveryPanel({ order, orderToken, onRevalidate }: Blocke
       <p style={{ fontSize: "14px", color: "var(--state-blocked-ink)", fontWeight: 600 }}>
         El sistema impide la entrega. Solicite la liquidación y la aprobación del cobro por el administrador.
       </p>
+      {revalidateError && (
+        <p role="alert" data-testid="revalidate-error" style={{ fontSize: "14px", color: "var(--state-blocked-ink)" }}>
+          No se pudo revalidar el saldo. Revise la conexión e intente de nuevo.
+        </p>
+      )}
       <div style={{ display: "flex", gap: "8px" }}>
         <Button variant="secondary" fullWidth onClick={() => navigate("/escanear")} data-testid="button-rescan">
           Volver a escanear

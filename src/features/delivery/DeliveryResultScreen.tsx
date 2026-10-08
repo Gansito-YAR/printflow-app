@@ -6,7 +6,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Spinner } from "../../components/ui/Spinner";
 import { Button } from "../../components/ui/Button";
 import { gateway } from "../../data";
-import { useSessionStore } from "../../store/session";
+import { useSessionStore, usableSession } from "../../store/session";
 import { evaluateDeliveryGuard } from "./deliveryGuard";
 import { ClearancePanel } from "./ClearancePanel";
 import { BlockedDeliveryPanel } from "./BlockedDeliveryPanel";
@@ -17,7 +17,8 @@ import type { ScannedOrderDTO, GuardDecision } from "../../data/contracts";
 export function DeliveryResultScreen() {
   const { orderToken = "" } = useParams();
   const navigate = useNavigate();
-  const session = useSessionStore((s) => s.session);
+  // Si el servidor revocó la sesión, el candado no tiene sesión utilizable (DENY).
+  const session = useSessionStore(usableSession);
   const isOnline = useSessionStore((s) => s.getEffectiveOnline());
 
   const [loading, setLoading] = useState(true);
@@ -39,7 +40,13 @@ export function DeliveryResultScreen() {
     (async () => {
       setLoading(true);
       const timestamp = new Date().toISOString();
-      const outcome = await gateway.scanOrder(orderToken);
+      let outcome: Awaited<ReturnType<typeof gateway.scanOrder>>;
+      try {
+        outcome = await gateway.scanOrder(orderToken);
+      } catch {
+        // Sesión revocada (el modal ya se muestra) o fallo inesperado: nunca se autoriza.
+        outcome = { kind: "NETWORK_ERROR" };
+      }
       if (cancelled) return;
       setReadAt(timestamp);
       if (outcome.kind === "FOUND") {
@@ -109,7 +116,7 @@ export function DeliveryResultScreen() {
     case "DENY_INDETERMINATE":
       return <ValidationUnavailablePanel reason={isReadExpired ? "expired" : "generic"} />;
     case "DENY_NOT_DELIVERABLE":
-      return <NotDeliverablePanel />;
+      return <NotDeliverablePanel status={order.status} />;
     default:
       return <ValidationUnavailablePanel reason="generic" />;
   }

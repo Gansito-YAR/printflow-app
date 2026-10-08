@@ -8,7 +8,7 @@ import { PlaceholderBox } from "../../components/ui/PlaceholderBox";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 
-import { gateway } from "../../data";
+import { isValidPayload } from "../../data";
 import { useSessionStore } from "../../store/session";
 import { useScannerStore } from "../../store/scanner";
 
@@ -23,25 +23,19 @@ export function ScannerScreen() {
   const [validating, setValidating] = useState(false);
   const [torchOn, setTorchOn] = useState(false);
 
-  const handleManualScan = async () => {
-    if (!manualToken.trim() || !isOnline || validating) return;
-    setValidating(true);
+  // M-01 (APP-04a): aquí solo se valida el formato del código y se navega.
+  // La consulta al servidor se hace UNA vez, en la pantalla de resultado.
+  const handleManualScan = () => {
+    const token = manualToken.trim();
+    if (!token || !isOnline || validating) return;
     setError(false);
     setNetworkError(false);
-    try {
-      const outcome = await gateway.scanOrder(manualToken.trim());
-      if (outcome.kind === "FOUND") {
-        navigate(`/resultado/${manualToken.trim()}`);
-      } else if (outcome.kind === "NETWORK_ERROR") {
-        setNetworkError(true);
-      } else {
-        setError(true);
-      }
-    } catch {
-      setNetworkError(true);
-    } finally {
-      setValidating(false);
+    if (!isValidPayload(token)) {
+      setError(true);
+      return;
     }
+    setValidating(true);
+    navigate(`/resultado/${encodeURIComponent(token)}`);
   };
 
   return (

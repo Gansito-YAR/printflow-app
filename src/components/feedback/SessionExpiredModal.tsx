@@ -9,6 +9,7 @@ import { useSessionStore } from "../../store/session";
 export function SessionExpiredModal() {
   const navigate = useNavigate();
   const session = useSessionStore((s) => s.session);
+  const revokedReason = useSessionStore((s) => s.revokedReason);
   const logout = useSessionStore((s) => s.logout);
 
   // M-03: el tick vive dentro del modal, no en AppShell con key={tick}.
@@ -25,7 +26,9 @@ export function SessionExpiredModal() {
   const deadline = new Date(session.absoluteDeadline);
   const isExpired = now >= deadline;
 
-  if (!isExpired) return null;
+  // Dos motivos: el reloj del turno (12 h) o el servidor cerró la sesión (APP-03d).
+  if (!isExpired && !revokedReason) return null;
+  const revoked = revokedReason === "REVOKED" && !isExpired;
 
   const handleGoToLogin = () => {
     logout();
@@ -75,10 +78,12 @@ export function SessionExpiredModal() {
         }}
       >
         <p style={{ fontSize: "18px", fontWeight: 700, marginBottom: "24px" }}>
-          Sesión expirada
+          {revoked ? "Sesión cerrada" : "Sesión expirada"}
         </p>
-        <p style={{ fontSize: "14px", color: "var(--ink-muted)", marginBottom: "24px" }}>
-          Su sesión ha expirado. Inicie sesión nuevamente para continuar.
+        <p style={{ fontSize: "14px", color: "var(--ink-muted)", marginBottom: "24px" }} data-testid="session-expired-reason">
+          {revoked
+            ? "El sistema cerró su sesión (turno terminado o cuenta desactivada). Inicie sesión nuevamente."
+            : "Su turno de 12 horas terminó. Inicie sesión nuevamente para continuar."}
         </p>
         <button
           data-testid="session-expired-go-login"

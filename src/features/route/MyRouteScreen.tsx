@@ -8,6 +8,7 @@ import { Button } from "../../components/ui/Button";
 import { Spinner } from "../../components/ui/Spinner";
 import { gateway } from "../../data";
 import { useSessionStore } from "../../store/session";
+import { useNavigate } from "react-router-dom";
 import type { RouteItemDTO } from "../../data/contracts";
 
 type RouteState = "loading" | "success" | "empty" | "offline" | "error";
@@ -244,6 +245,35 @@ export function MyRouteScreen() {
           )}
         </>
       )}
+
+      {/* APP-03: cerrar sesión al terminar el turno o al prestar el teléfono. */}
+      <LogoutButton />
+    </div>
+  );
+}
+
+function LogoutButton() {
+  const navigate = useNavigate();
+  const session = useSessionStore((s) => s.session);
+  const logout = useSessionStore((s) => s.logout);
+  if (!session) return null;
+  return (
+    <div style={{ borderTop: "1px solid var(--border-hairline)", paddingTop: "16px", marginTop: "8px" }}>
+      <p style={{ fontSize: "12px", color: "var(--ink-muted)", marginBottom: "8px" }}>
+        Sesión de {session.fullName} · turno hasta{" "}
+        {new Date(session.absoluteDeadline).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })}
+      </p>
+      <Button
+        variant="secondary"
+        fullWidth
+        onClick={() => {
+          logout();
+          navigate("/login", { replace: true });
+        }}
+        data-testid="button-logout"
+      >
+        Cerrar sesión
+      </Button>
     </div>
   );
 }

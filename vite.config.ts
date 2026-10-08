@@ -9,6 +9,12 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "prompt",
+      // APP-D-10: la API de Supabase NUNCA se guarda en caché (el saldo siempre es el
+      // del servidor en ese momento). Solo se precachea el cascarón de la app.
+      workbox: {
+        navigateFallbackDenylist: [/^\/rest\//, /^\/auth\//],
+        runtimeCaching: [{ urlPattern: /^https:\/\/[^/]+\.supabase\.co\//, handler: "NetworkOnly" }],
+      },
       manifest: {
         name: "PrintFlow — Entregas",
         short_name: "PrintFlow",
