@@ -10,6 +10,7 @@ import { LoginScreen } from "./features/auth/LoginScreen";
 import { ScannerScreen } from "./features/scanner/ScannerScreen";
 import { DeliveryResultScreen } from "./features/delivery/DeliveryResultScreen";
 import { MyRouteScreen } from "./features/route/MyRouteScreen";
+import { ProfileScreen } from "./features/profile/ProfileScreen";
 import { DemoScreen } from "./features/demo/DemoScreen";
 import { useSessionStore } from "./store/session";
 import { Spinner } from "./components/ui/Spinner";
@@ -63,6 +64,16 @@ export default function App() {
               <Protected>
                 <AppShell>
                   <MyRouteScreen />
+                </AppShell>
+              </Protected>
+            }
+          />
+          <Route
+            path="/perfil"
+            element={
+              <Protected>
+                <AppShell>
+                  <ProfileScreen />
                 </AppShell>
               </Protected>
             }

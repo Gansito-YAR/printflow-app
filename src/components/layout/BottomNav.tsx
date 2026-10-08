@@ -1,13 +1,14 @@
-// BottomNav — dos destinos de primer nivel: Escanear y Mi Ruta.
+// BottomNav — tres destinos de primer nivel: Escanear, Mi Ruta y Perfil.
 // Rediseño 1.2.0: icono + etiqueta (nunca solo icono), indicador activo en
 // píldora, 64 px + zona segura inferior del teléfono.
 
 import { NavLink } from "react-router-dom";
-import { Route as RouteIcon, ScanLine, type LucideIcon } from "lucide-react";
+import { CircleUserRound, Route as RouteIcon, ScanLine, type LucideIcon } from "lucide-react";
 
 const ITEMS: { to: string; label: string; icon: LucideIcon; testId: string }[] = [
   { to: "/escanear", label: "Escanear", icon: ScanLine, testId: "nav-escanear" },
   { to: "/mi-ruta", label: "Mi Ruta", icon: RouteIcon, testId: "nav-mi-ruta" },
+  { to: "/perfil", label: "Perfil", icon: CircleUserRound, testId: "nav-perfil" },
 ];
 
 export function BottomNav() {

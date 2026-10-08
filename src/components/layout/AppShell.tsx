@@ -9,7 +9,6 @@ import { useLocation, Link } from "react-router-dom";
 import { FlaskConical } from "lucide-react";
 import { isMock } from "../../data";
 import { ConnectionIndicator } from "./ConnectionIndicator";
-import { ThemeToggle } from "./ThemeToggle";
 import { BottomNav } from "./BottomNav";
 import { OfflineBanner } from "../feedback/OfflineBanner";
 import { SessionExpiredModal } from "../feedback/SessionExpiredModal";
@@ -93,7 +92,6 @@ export function AppShell({ children }: AppShellProps) {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
           <ConnectionIndicator />
-          <ThemeToggle />
         </div>
       </header>
       {!isLogin && <OfflineBanner />}

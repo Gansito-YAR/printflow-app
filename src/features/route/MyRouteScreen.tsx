@@ -3,13 +3,12 @@
 // Fase 1.5: DATOS INCOMPLETOS agrupados al final, botón actualizar siempre visible, fecha del día.
 
 import { useState, useEffect, useCallback, type ReactNode } from "react";
-import { AlertTriangle, Inbox, LogOut, RefreshCw, UserRound, WifiOff } from "lucide-react";
+import { AlertTriangle, Inbox, RefreshCw, WifiOff } from "lucide-react";
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { Button } from "../../components/ui/Button";
 import { Spinner } from "../../components/ui/Spinner";
 import { gateway } from "../../data";
 import { useSessionStore } from "../../store/session";
-import { useNavigate } from "react-router-dom";
 import type { RouteItemDTO } from "../../data/contracts";
 
 type RouteState = "loading" | "success" | "empty" | "offline" | "error";
@@ -325,57 +324,6 @@ export function MyRouteScreen() {
         </>
       )}
 
-      {/* APP-03: cerrar sesión al terminar el turno o al prestar el teléfono. */}
-      <LogoutButton />
-    </div>
-  );
-}
-
-function LogoutButton() {
-  const navigate = useNavigate();
-  const session = useSessionStore((s) => s.session);
-  const logout = useSessionStore((s) => s.logout);
-  if (!session) return null;
-  return (
-    <div className="pf-card" style={{ marginTop: "8px", padding: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        <span
-          aria-hidden="true"
-          style={{
-            width: "40px",
-            height: "40px",
-            borderRadius: "var(--radius-full)",
-            backgroundColor: "var(--brand-soft-bg)",
-            color: "var(--brand-ink-accent)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
-          <UserRound size={20} />
-        </span>
-        <div style={{ minWidth: 0 }}>
-          <p style={{ fontSize: "15px", fontWeight: 700, margin: 0, color: "var(--ink-strong)", overflowWrap: "anywhere" }}>
-            Sesión de {session.fullName}
-          </p>
-          <p className="tabular" style={{ fontSize: "13px", color: "var(--ink-muted)", margin: 0 }}>
-            Turno hasta {new Date(session.absoluteDeadline).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })}
-          </p>
-        </div>
-      </div>
-      <Button
-        variant="secondary"
-        fullWidth
-        onClick={() => {
-          logout();
-          navigate("/login", { replace: true });
-        }}
-        data-testid="button-logout"
-        icon={<LogOut size={18} aria-hidden="true" />}
-      >
-        Cerrar sesión
-      </Button>
     </div>
   );
 }
