@@ -1,14 +1,14 @@
-// ValidationUnavailablePanel — DENY_INDETERMINATE (balanceDue null o negativo).
+// ValidationUnavailablePanel — DENY_INDETERMINATE (saldo desconocido, negativo o lectura vencida).
 // FR-002: NO se renderiza el botón de entrega aquí.
-// A.2: reason="expired" muestra mensaje propio para lectura vencida.
-// Fase 2: con la lectura vencida se ofrece "Revalidar" (nueva lectura del servidor)
-// además de volver a escanear. El candado no cambia: la nueva lectura vuelve a
-// pasar por evaluateDeliveryGuard con su propio readAt.
+// A.2: reason="expired" para lectura vencida, con "Revalidar" (nueva lectura del
+// servidor que vuelve a pasar por evaluateDeliveryGuard con su propio readAt).
+// Rediseño 1.2.0: encabezado de estado y acciones apiladas.
 
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AlertCircle, AlertTriangle, RefreshCw, ScanLine, TimerReset } from "lucide-react";
 import { Button } from "../../components/ui/Button";
-import { StatusBadge } from "../../components/ui/StatusBadge";
+import { StatusHero } from "../../components/ui/StatusHero";
 import { gateway } from "../../data";
 import type { ScannedOrderDTO } from "../../data/contracts";
 
@@ -26,11 +26,12 @@ export function ValidationUnavailablePanel({ reason = "generic", orderToken, onR
   const inFlight = useRef(false);
   const canRevalidate = reason === "expired" && Boolean(orderToken && onRevalidate);
 
-  const message = reason === "expired"
-    ? canRevalidate
-      ? "La validación caducó por seguridad (más de 1 minuto). Revalide para consultar el saldo actual."
-      : "La validación caducó por seguridad. Vuelva a escanear el código."
-    : "No se pudo verificar el saldo del pedido. Contacte a soporte.";
+  const message =
+    reason === "expired"
+      ? canRevalidate
+        ? "La validación caducó por seguridad (más de 1 minuto). Revalide para consultar el saldo actual."
+        : "La validación caducó por seguridad. Vuelva a escanear el código."
+      : "No se pudo verificar el saldo del pedido. Contacte a soporte.";
 
   const handleRevalidate = async () => {
     if (inFlight.current || !orderToken || !onRevalidate) return;
@@ -50,34 +51,46 @@ export function ValidationUnavailablePanel({ reason = "generic", orderToken, onR
   };
 
   return (
-    <div
-      data-testid="validation-unavailable-panel"
-      style={{
-        padding: "24px 16px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "16px",
-        border: "2px solid var(--state-neutral-border)",
-        backgroundColor: "var(--state-neutral-bg)",
-      }}
-    >
-      <StatusBadge variant="error" label="VALIDACIÓN NO DISPONIBLE" />
-      <p style={{ fontSize: "14px" }}>
-        {message}
-      </p>
+    <div data-testid="validation-unavailable-panel" className="pf-enter" style={{ display: "flex", flexDirection: "column", gap: "24px", paddingTop: "16px" }}>
+      <StatusHero
+        tone="warning"
+        icon={reason === "expired" ? TimerReset : AlertTriangle}
+        kicker="VALIDACIÓN NO DISPONIBLE"
+        title={reason === "expired" ? "La lectura caducó" : "No se pudo verificar el saldo"}
+        description={message}
+      />
       {failed && (
-        <p role="alert" data-testid="revalidate-error" style={{ fontSize: "14px", color: "var(--state-blocked-ink)" }}>
+        <p
+          role="alert"
+          data-testid="revalidate-error"
+          style={{ display: "flex", alignItems: "center", gap: "8px", margin: 0, fontSize: "14px", fontWeight: 600, color: "var(--state-blocked-ink)" }}
+        >
+          <AlertCircle size={18} aria-hidden="true" />
           No se pudo revalidar. Revise la conexión e intente de nuevo.
         </p>
       )}
-      {canRevalidate && (
-        <Button fullWidth loading={revalidating} onClick={handleRevalidate} data-testid="button-revalidate">
-          {revalidating ? "Revalidando…" : "Revalidar"}
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        {canRevalidate && (
+          <Button
+            fullWidth
+            loading={revalidating}
+            onClick={handleRevalidate}
+            data-testid="button-revalidate"
+            icon={<RefreshCw size={20} aria-hidden="true" />}
+          >
+            {revalidating ? "Revalidando…" : "Revalidar"}
+          </Button>
+        )}
+        <Button
+          variant="secondary"
+          fullWidth
+          onClick={() => navigate("/escanear")}
+          data-testid="button-rescan"
+          icon={<ScanLine size={20} aria-hidden="true" />}
+        >
+          Volver a escanear
         </Button>
-      )}
-      <Button variant="secondary" fullWidth onClick={() => navigate("/escanear")} data-testid="button-rescan">
-        Volver a escanear
-      </Button>
+      </div>
     </div>
   );
 }

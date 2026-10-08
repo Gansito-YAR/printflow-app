@@ -14,14 +14,109 @@
   --color-border-strong: var(--border-strong);
 }
 
+/* ============================================================
+ * Base (rediseño 1.2.0 — guía ui-ux-pro-max, estilo minimalista suizo)
+ * ========================================================== */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: var(--surface-0);
+  /* Tipografía nativa: SF Pro en iOS, Roboto en Android. Sin descargas (offline). */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--surface-page);
   color: var(--ink-strong);
   margin: 0;
   padding: 0;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Sin el resaltado gris de WebKit; el estado presionado lo damos nosotros */
+  -webkit-tap-highlight-color: transparent;
   /* Transición suave entre temas: solo colores, nunca layout (Fase 2 §6.2) */
   transition: background-color var(--transition-theme), color var(--transition-theme);
+}
+
+/* Sin el retraso de 300 ms al tocar */
+button,
+a,
+input,
+select,
+textarea,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+/* Foco visible para teclado y lectores de pantalla (no se quita nunca) */
+:focus-visible {
+  outline: 3px solid var(--brand-bg);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+/* Cifras de dinero y fechas: ancho fijo para que no "salten" */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Componentes base ---------- */
+
+/* Tarjeta: superficie elevada con radio grande */
+.pf-card {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+/* Respuesta al presionar: escala sutil sin mover el layout */
+.pf-pressable {
+  transition:
+    transform var(--duration-press) var(--ease-out),
+    background-color var(--duration-press) var(--ease-out),
+    border-color var(--duration-press) var(--ease-out),
+    opacity var(--duration-press) var(--ease-out);
+}
+.pf-pressable:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+/* Entrada de contenido: aparece desde abajo (solo opacidad y transform) */
+@keyframes pf-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.pf-enter {
+  animation: pf-enter var(--duration-enter) var(--ease-out) both;
+}
+
+/* Línea de escaneo dentro del visor de la cámara */
+@keyframes pf-scanline {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(196px);
+    opacity: 0;
+  }
+}
+.pf-scanline {
+  animation: pf-scanline 2.2s ease-in-out infinite;
 }
 
 /* Respeta prefers-reduced-motion en toda la app (Fase 2 §6.2) */
@@ -32,6 +127,9 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  .pf-scanline {
+    display: none;
   }
 }
 

@@ -1,11 +1,13 @@
 // LoginScreen — FR-013 a FR-015, FR-027.
-// Constitution Principle V: login contra mocks.
+// Rediseño 1.2.0: bienvenida con marca, formulario en tarjeta con iconos,
+// envío con Enter (form), errores con icono y texto, selector de tema visible.
 
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
-import { Spinner } from "../../components/ui/Spinner";
+import { ThemeToggle } from "../../components/layout/ThemeToggle";
+import { AlertCircle, Clock, FlaskConical, Lock, LogIn, Mail, WifiOff } from "lucide-react";
 import { gateway, isMock } from "../../data";
 import { MOCK_CREDENTIALS } from "../../data/mocks/fixtures";
 import { useSessionStore } from "../../store/session";
@@ -52,7 +54,7 @@ export function LoginScreen() {
   return (
     <div
       data-testid="login-screen"
-      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+      style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", backgroundColor: "var(--surface-page)" }}
     >
       <header
         data-testid="app-header"
@@ -60,159 +62,180 @@ export function LoginScreen() {
           height: "var(--header-height)",
           display: "flex",
           alignItems: "center",
-          padding: "0 16px",
-          borderBottom: "1px solid var(--border-hairline)",
+          justifyContent: "space-between",
+          padding: "0 8px 0 16px",
         }}
       >
         <img
           src="/brand/logo-mark.png"
           alt="Imprenta Escalante"
           data-testid="logo-placeholder"
-          style={{
-            width: "32px",
-            height: "32px",
-            maxWidth: "40px",
-            maxHeight: "40px",
-            objectFit: "cover",
-            borderRadius: "var(--radius-sm)",
-            border: "1px solid var(--border-hairline)",
-          }}
+          width={32}
+          height={32}
+          style={{ width: "32px", height: "32px", objectFit: "cover", borderRadius: "8px" }}
         />
+        <ThemeToggle />
       </header>
       <main
         style={{
           flex: 1,
-          padding: "48px 16px 16px",
+          padding: "24px 16px 32px",
           display: "flex",
           flexDirection: "column",
-          gap: "16px",
-          maxWidth: "400px",
+          gap: "20px",
+          maxWidth: "420px",
           margin: "0 auto",
           width: "100%",
+          boxSizing: "border-box",
         }}
       >
-        {/* Marca principal del login */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+        {/* Marca y bienvenida */}
+        <div className="pf-enter" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px", textAlign: "center" }}>
           <img
             src="/brand/logo-mark.png"
-            alt="Imprenta Escalante"
-            style={{
-              width: "120px",
-              height: "102px",
-              objectFit: "cover",
-              borderRadius: "var(--radius-md)",
-              border: "1px solid var(--border-hairline)",
-            }}
+            alt=""
+            width={88}
+            height={75}
+            style={{ width: "88px", height: "75px", objectFit: "cover", borderRadius: "20px", boxShadow: "var(--shadow-card)" }}
           />
-          <p style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.1em", color: "var(--brand-ink-accent)", textTransform: "uppercase" }}>
+          <p style={{ fontSize: "12px", fontWeight: 800, letterSpacing: "0.12em", color: "var(--brand-ink-accent)", textTransform: "uppercase", margin: 0 }}>
             PrintFlow · Entregas
           </p>
+          <h1 style={{ fontSize: "26px", fontWeight: 800, lineHeight: 1.2, margin: 0, color: "var(--ink-strong)" }}>
+            Bienvenido
+          </h1>
+          <p style={{ fontSize: "15px", color: "var(--ink-base)", margin: 0, lineHeight: 1.5 }}>
+            Inicie sesión para validar y registrar entregas.
+          </p>
         </div>
-        <Input
-          label="Correo"
-          type="email"
-          value={email}
-          onChange={setEmail}
-          placeholder="instalador@imprenta.com"
-          disabled={loading}
-          error={error}
-          autoComplete="username"
-          data-testid="input-email"
-        />
-        <Input
-          label="Contraseña"
-          type="password"
-          value={password}
-          onChange={setPassword}
-          placeholder="••••••••"
-          disabled={loading}
-          error={error}
-          autoComplete="current-password"
-          data-testid="input-password"
-        />
-        {error && (
-          <p
-            role="alert"
-            data-testid="login-error"
-            style={{
-              color: "var(--state-blocked-ink)",
-              fontSize: "14px",
-              padding: "8px",
-              border: "2px solid var(--state-blocked-border)",
-              backgroundColor: "var(--state-blocked-bg)",
-            }}
-          >
-            Credenciales inválidas
-          </p>
-        )}
-        {!isOnline && (
-          <p
-            data-testid="offline-login-message"
-            style={{
-              color: "var(--ink-muted)",
-              fontSize: "14px",
-            }}
-          >
-            Se requiere conexión para iniciar sesión
-          </p>
-        )}
-        <Button
-          fullWidth
-          disabled={isButtonDisabled}
-          loading={loading}
-          onClick={handleSubmit}
-          data-testid="button-login"
-        >
-          {loading ? "Iniciando sesión…" : "Iniciar sesión"}
-        </Button>
-        <p
-          style={{
-            fontSize: "12px",
-            color: "var(--ink-muted)",
-            textAlign: "center",
+
+        <form
+          className="pf-card pf-enter"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleSubmit();
           }}
+          noValidate
+          style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "16px" }}
         >
-          La sesión caduca 12 horas después de iniciar sesión
-        </p>
-        {/* Credenciales demo visibles siempre — Fase 1.5 */}
-        {isMock && (
-          <>
-            <div
-              data-testid="demo-credentials"
+          <Input
+            label="Correo"
+            type="email"
+            value={email}
+            onChange={setEmail}
+            placeholder="instalador@imprenta.com"
+            disabled={loading}
+            error={error}
+            autoComplete="username"
+            inputMode="email"
+            autoCapitalize="none"
+            icon={<Mail size={20} />}
+            data-testid="input-email"
+          />
+          <Input
+            label="Contraseña"
+            type="password"
+            value={password}
+            onChange={setPassword}
+            placeholder="••••••••"
+            disabled={loading}
+            error={error}
+            autoComplete="current-password"
+            icon={<Lock size={20} />}
+            data-testid="input-password"
+          />
+          {error && (
+            <p
+              role="alert"
+              data-testid="login-error"
               style={{
-                marginTop: "24px",
-                padding: "16px",
-                border: "1px solid var(--border-hairline)",
-                backgroundColor: "var(--brand-soft-bg)",
-                fontSize: "12px",
-                color: "var(--ink-muted)",
-                textAlign: "center",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "8px",
+                margin: 0,
+                color: "var(--state-blocked-ink)",
+                fontSize: "14px",
+                fontWeight: 600,
+                padding: "12px",
+                borderRadius: "var(--radius-lg)",
+                border: "1px solid var(--state-blocked-border)",
+                backgroundColor: "var(--state-blocked-bg)",
               }}
             >
-              <p style={{ fontWeight: 600, marginBottom: "8px", color: "var(--brand-ink-accent)" }}>
-                [MODO DEMO]
-              </p>
-              <p>Correo: {MOCK_CREDENTIALS.email}</p>
-              <p>Contraseña: {MOCK_CREDENTIALS.password}</p>
-            </div>
+              <AlertCircle size={18} aria-hidden="true" style={{ flexShrink: 0, marginTop: "1px" }} />
+              Credenciales inválidas
+            </p>
+          )}
+          {!isOnline && (
+            <p
+              data-testid="offline-login-message"
+              style={{ display: "flex", alignItems: "center", gap: "8px", margin: 0, color: "var(--state-warning-ink)", fontSize: "14px", fontWeight: 600 }}
+            >
+              <WifiOff size={16} aria-hidden="true" />
+              Se requiere conexión para iniciar sesión
+            </p>
+          )}
+          <Button
+            fullWidth
+            type="submit"
+            disabled={isButtonDisabled}
+            loading={loading}
+            data-testid="button-login"
+            icon={<LogIn size={20} aria-hidden="true" />}
+          >
+            {loading ? "Iniciando sesión…" : "Iniciar sesión"}
+          </Button>
+        </form>
+
+        <p style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontSize: "13px", color: "var(--ink-muted)", textAlign: "center", margin: 0 }}>
+          <Clock size={14} aria-hidden="true" />
+          La sesión caduca 12 horas después de iniciar sesión
+        </p>
+
+        {/* Credenciales demo — solo con datos simulados (Fase 1.5, APP-D-02) */}
+        {isMock && (
+          <div
+            data-testid="demo-credentials"
+            style={{
+              padding: "16px",
+              borderRadius: "var(--radius-xl)",
+              border: "1px dashed var(--brand-bg)",
+              backgroundColor: "var(--brand-soft-bg)",
+              fontSize: "13px",
+              color: "var(--ink-base)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
+            <p style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: 800, letterSpacing: "0.06em", color: "var(--brand-ink-accent)", margin: "0 0 4px" }}>
+              <FlaskConical size={14} aria-hidden="true" />
+              [MODO DEMO]
+            </p>
+            <p style={{ margin: 0 }}>Correo: {MOCK_CREDENTIALS.email}</p>
+            <p style={{ margin: 0 }}>Contraseña: {MOCK_CREDENTIALS.password}</p>
             <Link
               to="/demo"
               data-testid="button-demo-login"
+              className="pf-pressable"
               style={{
-                display: "block",
-                textAlign: "center",
-                fontSize: "13px",
-                fontWeight: 600,
+                marginTop: "12px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "6px",
+                minHeight: "44px",
+                borderRadius: "var(--radius-lg)",
+                fontSize: "14px",
+                fontWeight: 700,
                 color: "var(--brand-ink-accent)",
                 textDecoration: "none",
-                padding: "8px",
-                border: "1px solid var(--border-hairline)",
-                marginTop: "8px",
+                border: "1px solid var(--brand-bg)",
               }}
             >
               [DEMO] Ir al panel de demostración
             </Link>
-          </>
+          </div>
         )}
       </main>
     </div>

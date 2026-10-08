@@ -20,8 +20,9 @@ export function Spinner({ size = "md", "data-testid": testId = "spinner" }: Spin
       style={{
         width: px,
         height: px,
-        border: `2px solid var(--surface-3)`,
-        borderTopColor: "var(--ink-strong)",
+        border: "2.5px solid currentColor",
+        borderTopColor: "transparent",
+        opacity: 0.85,
       }}
       role="status"
       aria-label="Cargando"

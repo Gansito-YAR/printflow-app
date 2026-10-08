@@ -1,5 +1,7 @@
-// PlaceholderBox — caja gris con label entre corchetes.
-// Constitution Principle IV: sin color, sin fotos, sin iconos reales.
+// PlaceholderBox — marcador de posición (solo modo demo/mock).
+// Rediseño 1.2.0: misma función, con radio y un icono discreto.
+
+import { ScanLine } from "lucide-react";
 
 interface PlaceholderBoxProps {
   label: string;
@@ -19,20 +21,28 @@ export function PlaceholderBox({
   return (
     <div
       data-testid={testId}
-      className={`flex items-center justify-center rounded ${trama ? "trama-diagonal" : ""}`}
+      className={trama ? "trama-diagonal" : undefined}
       style={{
         aspectRatio,
         minHeight,
+        height: minHeight === "100%" ? "100%" : undefined,
         width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "8px",
         backgroundColor: "var(--surface-2)",
         border: "1px solid var(--border-hairline)",
+        borderRadius: "var(--radius-2xl)",
         color: "var(--ink-muted)",
-        fontSize: "14px",
+        fontSize: "13px",
         textAlign: "center",
         padding: "16px",
+        boxSizing: "border-box",
       }}
     >
-      [{label}]
+      <ScanLine size={28} aria-hidden="true" />[{label}]
     </div>
   );
 }

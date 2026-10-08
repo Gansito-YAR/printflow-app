@@ -1,7 +1,8 @@
-// OfflineBanner — banner superior "SIN CONEXIÓN".
-// Constitution Principle IV: sin color.
-// Fase 1.5: respeta interruptor de demo.
+// OfflineBanner — aviso "SIN CONEXIÓN" bajo el encabezado.
+// Rediseño 1.2.0: icono + texto + explicación de qué no se puede hacer.
+// Respeta el interruptor de demo (Fase 1.5).
 
+import { WifiOff } from "lucide-react";
 import { useSessionStore } from "../../store/session";
 
 export function OfflineBanner() {
@@ -10,18 +11,24 @@ export function OfflineBanner() {
   return (
     <div
       data-testid="offline-banner"
+      role="alert"
       style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "8px",
         backgroundColor: "var(--state-warning-bg)",
         color: "var(--state-warning-ink)",
-        textAlign: "center",
-        padding: "8px 16px",
+        borderBottom: "1px solid var(--state-warning-border)",
+        padding: "10px 16px",
         fontSize: "14px",
         fontWeight: 600,
-        letterSpacing: "0.05em",
-        textTransform: "uppercase",
       }}
     >
-      SIN CONEXIÓN
+      <WifiOff size={16} strokeWidth={2.5} aria-hidden="true" />
+      <span>
+        <strong style={{ letterSpacing: "0.04em" }}>SIN CONEXIÓN</strong> · no se pueden validar entregas
+      </span>
     </div>
   );
 }

@@ -1,9 +1,11 @@
-// SessionExpiredModal — modal bloqueante cuando la sesión expira.
-// FR-026: Modal bloqueante "Sesión expirada" con botón que redirige a login.
-// A.3: no importa nada de demo. El demo limpia su propio interruptor.
+// SessionExpiredModal — modal bloqueante cuando la sesión termina.
+// FR-026: botón que redirige al login. A.3: no importa nada de demo.
+// Fase 2 (APP-03d): dos motivos — turno de 12 h vencido o sesión cerrada por el servidor.
+// Rediseño 1.2.0: tarjeta con icono, velo al 50 % y animación de entrada.
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { LockKeyhole, TimerOff } from "lucide-react";
 import { useSessionStore } from "../../store/session";
 
 export function SessionExpiredModal() {
@@ -12,8 +14,7 @@ export function SessionExpiredModal() {
   const revokedReason = useSessionStore((s) => s.revokedReason);
   const logout = useSessionStore((s) => s.logout);
 
-  // M-03: el tick vive dentro del modal, no en AppShell con key={tick}.
-  // Esto evita remontar el componente cada segundo.
+  // M-03: el tick vive dentro del modal, no en AppShell (evita remontar la app cada segundo).
   const [, setTick] = useState(0);
   useEffect(() => {
     const id = setInterval(() => setTick((t) => t + 1), 1000);
@@ -22,13 +23,11 @@ export function SessionExpiredModal() {
 
   if (!session) return null;
 
-  const now = new Date();
-  const deadline = new Date(session.absoluteDeadline);
-  const isExpired = now >= deadline;
-
-  // Dos motivos: el reloj del turno (12 h) o el servidor cerró la sesión (APP-03d).
+  const isExpired = new Date() >= new Date(session.absoluteDeadline);
+  // Dos motivos: el reloj del turno (12 h) o el servidor cerró la sesión.
   if (!isExpired && !revokedReason) return null;
   const revoked = revokedReason === "REVOKED" && !isExpired;
+  const Icon = revoked ? LockKeyhole : TimerOff;
 
   const handleGoToLogin = () => {
     logout();
@@ -40,47 +39,59 @@ export function SessionExpiredModal() {
       data-testid="session-expired-modal"
       role="dialog"
       aria-modal="true"
+      aria-labelledby="session-expired-title"
       style={{
         position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        inset: 0,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        padding: "16px",
         zIndex: 1000,
       }}
     >
-      {/* Backdrop semitransparente — separado del modal para no afectarlo */}
       <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "var(--overlay-backdrop)",
-          opacity: 0.5,
-        }}
+        aria-hidden="true"
+        style={{ position: "absolute", inset: 0, backgroundColor: "var(--overlay-backdrop)", opacity: 0.55 }}
       />
-      {/* Modal content — opaco, encima del backdrop */}
       <div
+        className="pf-card pf-enter"
         style={{
           position: "relative",
-          backgroundColor: "var(--surface-0)",
-          border: "2px solid var(--border-strong)",
-          padding: "32px 24px",
-          maxWidth: "320px",
-          width: "90%",
+          width: "100%",
+          maxWidth: "360px",
+          padding: "28px 24px 24px",
           textAlign: "center",
-          zIndex: 1,
+          boxShadow: "var(--shadow-float)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "12px",
         }}
       >
-        <p style={{ fontSize: "18px", fontWeight: 700, marginBottom: "24px" }}>
+        <span
+          aria-hidden="true"
+          style={{
+            width: "64px",
+            height: "64px",
+            borderRadius: "var(--radius-full)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "var(--state-warning-bg)",
+            color: "var(--state-warning-ink)",
+            border: "2px solid var(--state-warning-border)",
+          }}
+        >
+          <Icon size={30} />
+        </span>
+        <p id="session-expired-title" style={{ fontSize: "20px", fontWeight: 700, margin: 0, color: "var(--ink-strong)" }}>
           {revoked ? "Sesión cerrada" : "Sesión expirada"}
         </p>
-        <p style={{ fontSize: "14px", color: "var(--ink-muted)", marginBottom: "24px" }} data-testid="session-expired-reason">
+        <p
+          style={{ fontSize: "15px", color: "var(--ink-base)", margin: 0, lineHeight: 1.5 }}
+          data-testid="session-expired-reason"
+        >
           {revoked
             ? "El sistema cerró su sesión (turno terminado o cuenta desactivada). Inicie sesión nuevamente."
             : "Su turno de 12 horas terminó. Inicie sesión nuevamente para continuar."}
@@ -88,15 +99,17 @@ export function SessionExpiredModal() {
         <button
           data-testid="session-expired-go-login"
           onClick={handleGoToLogin}
+          className="pf-pressable"
           style={{
+            marginTop: "8px",
             height: "56px",
-            minHeight: "var(--hitbox-min)",
             width: "100%",
             backgroundColor: "var(--action-primary-bg)",
             color: "var(--action-primary-ink)",
-            border: "2px solid var(--ink-strong)",
+            border: "none",
+            borderRadius: "14px",
             fontSize: "16px",
-            fontWeight: 600,
+            fontWeight: 700,
             cursor: "pointer",
           }}
         >

@@ -100,12 +100,12 @@ export function CameraScanner({ onDecode, onProblem, onTorchSupport, torchOn, pa
       aria-label="Vista de la cámara para leer el código QR de la remisión"
       style={{
         width: "100%",
-        aspectRatio: "4 / 3",
-        minHeight: "288px",
+        height: "100%",
+        position: "absolute",
+        inset: 0,
         objectFit: "cover",
         display: "block",
-        backgroundColor: "var(--surface-2)",
-        border: "2px solid var(--border-strong)",
+        backgroundColor: "var(--camera-bg)",
       }}
     />
   );

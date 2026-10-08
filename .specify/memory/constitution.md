@@ -48,6 +48,16 @@ La pantalla "Mi Ruta" no muestra ni solicita total, saldo, abonos, método de pa
 
 ### IV. Visual Sin Color
 
+> **Enmienda 1.2.0 (2026-10-08, aprobada por Isaías):** rediseño de UI/UX para una app presentable y
+> profesional (guía: skill *ui-ux-pro-max*, estilo minimalista suizo; referencias: apps de entrega
+> y comprobante de entrega). Se permiten: **iconos SVG** de una sola familia (Lucide, trazo uniforme),
+> **radios redondeados**, **elevación suave** y **micro-animaciones de 150–250 ms** (siempre
+> respetando `prefers-reduced-motion`). Se conserva lo esencial de este principio: la **paleta de
+> `tokens.css`** (marca #F89A16, sin hex en componentes), la criticidad **nunca solo por color**
+> (siempre icono + etiqueta en texto + borde), el botón de confirmar con hitbox ≥ 60 px y alto
+> visual 64 px, y que todo se entienda impreso en blanco y negro. Las reglas de abajo que
+> prohibían iconos, radios y animaciones quedan sustituidas por esta enmienda.
+
 Cero color de marca. Todos los colores salen de variables en `src/styles/tokens.css` (escala de grises).
 
 - Prohibido un hex literal en un componente. Todo pasa por las variables CSS.
@@ -139,4 +149,4 @@ La constitution tiene precedencia sobre cualquier otra práctica o preferencia. 
 - Los PRs deben verificar cumplimiento con la constitution.
 - Para desarrollo runtime, consultar `CLAUDE.md` / `GEMINI.md` para la ruta al plan actual.
 
-**Version**: 1.1.0 | **Ratified**: 2026-08-12 | **Last Amended**: 2026-10-08 (Principio V: inicio de Fase 2)
+**Version**: 1.2.0 | **Ratified**: 2026-08-12 | **Last Amended**: 2026-10-08 (Principio IV: rediseño de UI/UX; Principio V: inicio de Fase 2)

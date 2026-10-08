@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Spinner } from "../../components/ui/Spinner";
 import { Button } from "../../components/ui/Button";
+import { StatusHero } from "../../components/ui/StatusHero";
+import { QrCode, RefreshCw, ScanLine, WifiOff } from "lucide-react";
 import { gateway } from "../../data";
 import { useSessionStore, usableSession } from "../../store/session";
 import { evaluateDeliveryGuard } from "./deliveryGuard";
@@ -67,18 +69,31 @@ export function DeliveryResultScreen() {
   };
 
   if (loading) {
+    // Esqueleto con la forma del resultado (no un spinner suelto).
     return (
-      <div data-testid="delivery-loading" style={{ display: "flex", justifyContent: "center", padding: "48px" }}>
-        <Spinner size="lg" />
+      <div data-testid="delivery-loading" aria-busy="true" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", paddingTop: "24px" }}>
+        <span className="skeleton-pulse" style={{ width: "72px", height: "72px", borderRadius: "var(--radius-full)", backgroundColor: "var(--surface-2)" }} />
+        <span className="skeleton-pulse" style={{ width: "160px", height: "14px", borderRadius: "7px", backgroundColor: "var(--surface-2)" }} />
+        <span className="skeleton-pulse" style={{ width: "220px", height: "22px", borderRadius: "8px", backgroundColor: "var(--surface-2)" }} />
+        <div className="pf-card skeleton-pulse" style={{ width: "100%", height: "150px", marginTop: "8px" }} />
+        <span style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", color: "var(--ink-muted)" }}>
+          <Spinner size="sm" /> Validando con el servidor…
+        </span>
       </div>
     );
   }
 
   if (networkError) {
     return (
-      <div data-testid="scan-network-error" style={{ padding: "24px 16px", textAlign: "center", display: "flex", flexDirection: "column", gap: "16px", border: "2px solid var(--state-warning-border)", backgroundColor: "var(--state-warning-bg)", color: "var(--state-warning-ink)" }}>
-        <p style={{ fontWeight: 600, marginBottom: "16px" }}>Sin conexión al validar. Intente de nuevo.</p>
-        <Button variant="secondary" fullWidth onClick={() => navigate("/escanear")} data-testid="button-retry-scan">
+      <div data-testid="scan-network-error" className="pf-enter" style={{ display: "flex", flexDirection: "column", gap: "24px", paddingTop: "16px" }}>
+        <StatusHero
+          tone="warning"
+          icon={WifiOff}
+          kicker="SIN CONEXIÓN"
+          title="No se pudo validar"
+          description="Sin conexión al validar. Intente de nuevo."
+        />
+        <Button fullWidth onClick={() => navigate("/escanear")} data-testid="button-retry-scan" icon={<RefreshCw size={20} aria-hidden="true" />}>
           Reintentar
         </Button>
       </div>
@@ -87,8 +102,17 @@ export function DeliveryResultScreen() {
 
   if (notFound || !order) {
     return (
-      <div data-testid="qr-not-recognized" style={{ padding: "24px 16px", textAlign: "center", border: "2px solid var(--state-blocked-border)", backgroundColor: "var(--state-blocked-bg)", color: "var(--state-blocked-ink)" }}>
-        <p style={{ fontWeight: 600, marginBottom: "16px" }}>Código QR no reconocido</p>
+      <div data-testid="qr-not-recognized" className="pf-enter" style={{ display: "flex", flexDirection: "column", gap: "24px", paddingTop: "16px" }}>
+        <StatusHero
+          tone="blocked"
+          icon={QrCode}
+          kicker="NO RECONOCIDO"
+          title="Código QR no reconocido"
+          description="El código no corresponde a ninguna remisión. Verifique que sea el QR de la nota de remisión."
+        />
+        <Button variant="secondary" fullWidth onClick={() => navigate("/escanear")} data-testid="button-rescan" icon={<ScanLine size={20} aria-hidden="true" />}>
+          Volver a escanear
+        </Button>
       </div>
     );
   }

@@ -1,5 +1,17 @@
-// StatusBadge — semáforo estructural SIN color.
-// Constitution Principle IV: criticidad via bordes y tramas, no color.
+// StatusBadge — etiqueta de estado (píldora).
+// Rediseño 1.2.0: icono + texto + borde. El color es refuerzo, nunca la única
+// señal (se entiende en blanco y negro por el icono y la etiqueta).
+
+import {
+  AlertCircle,
+  AlertTriangle,
+  Ban,
+  CalendarClock,
+  CalendarCheck,
+  CheckCircle2,
+  Clock,
+  type LucideIcon,
+} from "lucide-react";
 
 type BadgeVariant =
   | "blocked"
@@ -16,61 +28,42 @@ interface StatusBadgeProps {
   "data-testid"?: string;
 }
 
-// Fase 2: color como refuerzo. Las tramas, bordes y mayúsculas se conservan.
-const VARIANT_STYLES: Record<BadgeVariant, React.CSSProperties> = {
-  blocked: {
-    border: "4px solid var(--state-blocked-border)",
-    color: "var(--state-blocked-ink)",
-    backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 4px, var(--state-blocked-bg) 4px, var(--state-blocked-bg) 8px)",
-  },
-  overdue: {
-    border: "4px solid var(--state-blocked-border)",
-    color: "var(--state-blocked-ink)",
-    backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 4px, var(--state-blocked-bg) 4px, var(--state-blocked-bg) 8px)",
-  },
-  "due-today": {
-    border: "4px solid var(--state-warning-border)",
-    color: "var(--state-warning-ink)",
-    backgroundColor: "var(--state-warning-bg)",
-  },
-  "due-tomorrow": {
-    border: "2px dashed var(--state-neutral-border)",
-    color: "var(--state-neutral-ink)",
-    backgroundColor: "var(--state-neutral-bg)",
-  },
-  "on-time": {
-    border: "1px solid var(--state-cleared-border)",
-    color: "var(--state-cleared-ink)",
-    backgroundColor: "var(--state-cleared-bg)",
-  },
-  authorized: {
-    border: "4px double var(--state-cleared-border)",
-    color: "var(--state-cleared-ink)",
-    backgroundColor: "var(--state-cleared-bg)",
-  },
-  error: {
-    border: "2px solid var(--state-blocked-border)",
-    color: "var(--state-blocked-ink)",
-    backgroundColor: "var(--state-blocked-bg)",
-  },
+type Tone = "blocked" | "warning" | "neutral" | "cleared";
+
+const VARIANTS: Record<BadgeVariant, { tone: Tone; icon: LucideIcon; dashed?: boolean }> = {
+  blocked: { tone: "blocked", icon: Ban },
+  overdue: { tone: "blocked", icon: AlertCircle },
+  "due-today": { tone: "warning", icon: Clock },
+  "due-tomorrow": { tone: "neutral", icon: CalendarClock, dashed: true },
+  "on-time": { tone: "cleared", icon: CalendarCheck },
+  authorized: { tone: "cleared", icon: CheckCircle2 },
+  error: { tone: "blocked", icon: AlertTriangle },
 };
 
 export function StatusBadge({ variant, label, "data-testid": testId = "status-badge" }: StatusBadgeProps) {
+  const { tone, icon: Icon, dashed } = VARIANTS[variant];
   return (
     <span
       data-testid={testId}
       style={{
-        display: "inline-block",
-        padding: "4px 8px",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "6px",
+        padding: "4px 10px 4px 8px",
+        minHeight: "28px",
         fontSize: "12px",
         fontWeight: 700,
-        letterSpacing: "0.05em",
+        letterSpacing: "0.04em",
         textTransform: "uppercase",
-        color: "var(--ink-strong)",
-        backgroundColor: "var(--surface-0)",
-        ...VARIANT_STYLES[variant],
+        lineHeight: 1.2,
+        borderRadius: "var(--radius-full)",
+        color: `var(--state-${tone}-ink)`,
+        backgroundColor: `var(--state-${tone}-bg)`,
+        border: `1px ${dashed ? "dashed" : "solid"} var(--state-${tone}-border)`,
+        whiteSpace: "nowrap",
       }}
     >
+      <Icon size={14} strokeWidth={2.5} aria-hidden="true" />
       {label}
     </span>
   );
