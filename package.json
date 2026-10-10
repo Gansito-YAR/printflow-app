@@ -13,6 +13,7 @@
     "dev:telefono": "vite --host --mode telefono"
   },
   "dependencies": {
+    "@fontsource/barlow": "^5.3.0",
     "@supabase/supabase-js": "2.117",
     "lucide-react": "^0.460.0",
     "qr-scanner": "^1.4.2",

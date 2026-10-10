@@ -18,6 +18,8 @@ export default defineConfig(({ mode }) => ({
       // APP-D-10: la API de Supabase NUNCA se guarda en caché (el saldo siempre es el
       // del servidor en ese momento). Solo se precachea el cascarón de la app.
       workbox: {
+        // Cascarón + tipografía (las fuentes no entran en el patrón por defecto).
+        globPatterns: ["**/*.{js,css,html,woff2}", "brand/logo-mark.png", "manifest-icons/*.png"],
         navigateFallbackDenylist: [/^\/rest\//, /^\/auth\//],
         runtimeCaching: [{ urlPattern: /^https:\/\/[^/]+\.supabase\.co\//, handler: "NetworkOnly" }],
       },
