@@ -11,7 +11,10 @@ import { useSessionStore } from "../store/session";
 
 export type DataSource = "mock" | "supabase";
 
-export const dataSource: DataSource = import.meta.env.VITE_DATA_SOURCE === "supabase" ? "supabase" : "mock";
+// Tolera mayúsculas, espacios y comillas capturados por error en el hosting.
+const rawDataSource = import.meta.env.VITE_DATA_SOURCE;
+export const dataSource: DataSource =
+  (rawDataSource ?? "").trim().replace(/^["']|["']$/g, "").toLowerCase() === "supabase" ? "supabase" : "mock";
 
 export const isMock = dataSource === "mock";
 
@@ -19,6 +22,7 @@ export const isMock = dataSource === "mock";
 // "mock" en producción, falta VITE_DATA_SOURCE=supabase en el build (o no se redesplegó).
 // Nunca se imprime la clave, solo si existe.
 console.info("[PrintFlow] fuente de datos:", dataSource, {
+  VITE_DATA_SOURCE_recibida: rawDataSource === undefined ? "(no definida al compilar)" : JSON.stringify(rawDataSource),
   supabaseUrl: import.meta.env.VITE_SUPABASE_URL ?? "(sin configurar)",
   anonKeyConfigurada: Boolean(import.meta.env.VITE_SUPABASE_ANON_KEY),
 });
