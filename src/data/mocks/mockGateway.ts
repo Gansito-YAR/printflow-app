@@ -57,6 +57,7 @@ export class MockGateway implements PrintflowGateway {
       }
       return session;
     }
+    console.warn("[PrintFlow] login en MODO DEMOSTRACIÓN: solo se aceptan las credenciales demo. Configure VITE_DATA_SOURCE=supabase y vuelva a compilar.");
     throw new Error("Credenciales inválidas");
   }
 

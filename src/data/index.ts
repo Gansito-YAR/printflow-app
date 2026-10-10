@@ -15,6 +15,14 @@ export const dataSource: DataSource = import.meta.env.VITE_DATA_SOURCE === "supa
 
 export const isMock = dataSource === "mock";
 
+// Diagnóstico de despliegue: Vite fija estas variables al COMPILAR. Si aquí sale
+// "mock" en producción, falta VITE_DATA_SOURCE=supabase en el build (o no se redesplegó).
+// Nunca se imprime la clave, solo si existe.
+console.info("[PrintFlow] fuente de datos:", dataSource, {
+  supabaseUrl: import.meta.env.VITE_SUPABASE_URL ?? "(sin configurar)",
+  anonKeyConfigurada: Boolean(import.meta.env.VITE_SUPABASE_ANON_KEY),
+});
+
 export const supabaseGateway: SupabaseGateway | null = dataSource === "supabase" ? new SupabaseGateway() : null;
 
 export { SessionRevokedError };

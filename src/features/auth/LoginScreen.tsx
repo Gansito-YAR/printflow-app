@@ -23,6 +23,7 @@ export function LoginScreen() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [serverUnreachable, setServerUnreachable] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const isEmailValid = EMAIL_REGEX.test(email);
@@ -34,6 +35,7 @@ export function LoginScreen() {
     if (isButtonDisabled) return;
     setLoading(true);
     setError(false);
+    setServerUnreachable(false);
     setSubmitted(true);
     try {
       const session = await gateway.signIn(email, password);
@@ -42,7 +44,8 @@ export function LoginScreen() {
     } catch (err) {
       const msg = err instanceof Error ? err.message : "";
       if (msg === "NETWORK_ERROR") {
-        // offline — el botón ya está deshabilitado por isOnline
+        // Con red, pero sin llegar al servidor (URL mal escrita, servidor caído).
+        setServerUnreachable(true);
       } else {
         setError(true);
       }
@@ -164,6 +167,11 @@ export function LoginScreen() {
             >
               <AlertCircle size={18} aria-hidden="true" style={{ flexShrink: 0, marginTop: "1px" }} />
               Credenciales inválidas
+            </p>
+          )}
+          {serverUnreachable && (
+            <p role="alert" data-testid="login-unreachable" style={{ margin: 0, color: "var(--state-warning-ink)", fontSize: "14px", fontWeight: 600 }}>
+              No se pudo contactar al servidor. Intente de nuevo; si persiste, avise a Sistemas.
             </p>
           )}
           {!isOnline && (

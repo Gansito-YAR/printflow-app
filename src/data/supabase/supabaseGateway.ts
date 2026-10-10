@@ -98,11 +98,18 @@ export class SupabaseGateway implements PrintflowGateway {
     try {
       result = await this.db.auth.signInWithPassword({ email: email.trim(), password });
     } catch (err) {
+      console.warn("[PrintFlow] login: la petición a Supabase Auth falló", err);
       if (classify(err) === "NETWORK") throw new Error("NETWORK_ERROR");
       throw new Error(GENERIC_LOGIN_ERROR);
     }
     const { data, error } = result;
     if (error || !data.session) {
+      // Al usuario se le muestra un mensaje genérico; el motivo real queda en consola.
+      console.warn("[PrintFlow] login rechazado por Supabase Auth", {
+        status: (error as { status?: number } | null)?.status,
+        code: (error as { code?: string } | null)?.code,
+        message: error?.message ?? "sin sesión en la respuesta",
+      });
       if (error && classify(error) === "NETWORK") throw new Error("NETWORK_ERROR");
       throw new Error(GENERIC_LOGIN_ERROR);
     }
@@ -110,12 +117,14 @@ export class SupabaseGateway implements PrintflowGateway {
     try {
       session = await this.sessionFromToken(data.session.access_token, data.session.user.id);
     } catch (err) {
+      console.warn("[PrintFlow] login: no se pudo leer el perfil (profiles)", err);
       await this.db.auth.signOut();
       if (err instanceof Error && err.message === "NETWORK_ERROR") throw err;
       throw new Error(GENERIC_LOGIN_ERROR);
     }
     if (!session) {
       // ADMIN, inactivo o sin marca de login: misma respuesta genérica (no revela el motivo).
+      console.warn("[PrintFlow] login: la cuenta no es un INSTALADOR activo o el token no trae la marca de login");
       await this.db.auth.signOut();
       throw new Error(GENERIC_LOGIN_ERROR);
     }
