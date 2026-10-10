@@ -13,6 +13,8 @@ export default defineConfig(({ mode }) => ({
     tailwindcss(),
     VitePWA({
       registerType: "prompt",
+      // El registro lo hace src/pwa.ts (para conectar el aviso de actualización).
+      injectRegister: false,
       // APP-D-10: la API de Supabase NUNCA se guarda en caché (el saldo siempre es el
       // del servidor en ese momento). Solo se precachea el cascarón de la app.
       workbox: {

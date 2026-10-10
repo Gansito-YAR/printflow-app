@@ -24,9 +24,7 @@ export function AppShell({ children }: AppShellProps) {
   const isLogin = location.pathname === "/login";
   const updateAvailable = useAppStore((s) => s.updateAvailable);
 
-  const handleUpdate = () => {
-    window.location.reload();
-  };
+  const handleUpdate = useAppStore((s) => s.applyUpdate);
 
   return (
     <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", backgroundColor: "var(--surface-page)" }}>

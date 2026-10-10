@@ -7,9 +7,12 @@ import { create } from "zustand";
 interface AppState {
   updateAvailable: boolean;
   setUpdateAvailable: (v: boolean) => void;
+  /** Activa la versión en espera y recarga (lo registra pwa.ts en producción). */
+  applyUpdate: () => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
   updateAvailable: false,
   setUpdateAvailable: (v) => set({ updateAvailable: v }),
+  applyUpdate: () => window.location.reload(),
 }));
